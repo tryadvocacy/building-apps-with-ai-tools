@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Processor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: #000000;
+            padding: 40px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .app-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .app-subtitle {
+            font-size: 1.1rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        .file-upload-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .file-upload-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input-label {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .file-input-label:hover {
+            background: #1d4ed8;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-name-display {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .tabs-container {
+            background: #1a1a1a;
+            border-bottom: 1px solid #2a2a2a;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: #888;
+            padding: 18px 30px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            color: #fff;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-badge {
+            background: #2a2a2a;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .tab.active .tab-badge {
+            background: #2563eb;
+        }
+
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh {
+            background: #000;
+            color: #fff;
+            border: 2px solid #333;
+        }
+
+        .btn-refresh:hover {
+            background: #1a1a1a;
+            border-color: #555;
+        }
+
+        .btn-delete-all {
+            background: transparent;
+            color: #888;
+            border: 2px solid #333;
+        }
+
+        .btn-delete-all:hover {
+            background: #1a1a1a;
+            color: #ef4444;
+            border-color: #555;
+        }
+
+        .btn-export {
+            background: #10b981;
+            color: white;
+            border: 2px solid #10b981;
+        }
+
+        .btn-export:hover {
+            background: #059669;
+            border-color: #059669;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+        }
+
+        .item:hover {
+            background: #222;
+            border-color: #333;
+        }
+
+        .item.completed {
+            opacity: 0.5;
+        }
+
+        .item-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-content {
+            word-wrap: break-word;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        .item-content a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .item-content a:hover {
+            text-decoration: underline;
+        }
+
+        .item-meta {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .item-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-view {
+            background: #000;
+            color: #fff;
+            border: 2px solid #333;
+        }
+
+        .btn-view:hover {
+            background: #1a1a1a;
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #888;
+            border: 2px solid #333;
+        }
+
+        .btn-delete:hover {
+            color: #ef4444;
+            border-color: #555;
+            background: #1a1a1a;
+        }
+
+        .btn-copy {
+            background: transparent;
+            color: #888;
+            border: 2px solid #333;
+        }
+
+        .btn-copy:hover {
+            color: #10b981;
+            border-color: #555;
+            background: #1a1a1a;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+
+        .task-item-wrapper {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-subtext {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1f2937;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            border: 1px solid #374151;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .app-title {
+                font-size: 1.8rem;
+            }
+
+            .tabs {
+                overflow-x: scroll;
+            }
+
+            .item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .item-actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .item-btn {
+                flex: 1;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn, .search-box {
+                width: 100%;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="app-title">
+            <span>📝</span>
+            <span>Note Processor</span>
+        </div>
+        <div class="app-subtitle">Process your tagged notes with ease</div>
+    </div>
+
+    <div class="file-upload-section">
+        <div class="file-upload-wrapper">
+            <label for="fileInput" class="file-input-label">
+                📁 Choose File
+            </label>
+            <input type="file" id="fileInput" accept=".md,.txt">
+            <span class="file-name-display" id="fileNameDisplay">No file selected</span>
+        </div>
+    </div>
+
+    <div class="tabs-container">
+        <div class="tabs">
+            <button class="tab active" data-tab="read">
+                📚 Read
+                <span class="tab-badge" id="readBadge">0</span>
+            </button>
+            <button class="tab" data-tab="watch">
+                🎬 Watch
+                <span class="tab-badge" id="watchBadge">0</span>
+            </button>
+            <button class="tab" data-tab="tasks">
+                ✅ Tasks
+                <span class="tab-badge" id="tasksBadge">0</span>
+            </button>
+            <button class="tab" data-tab="content">
+                💡 Content
+                <span class="tab-badge" id="contentBadge">0</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="action-buttons">
+            <button class="btn btn-refresh" id="refreshBtn">
+                🔄 Refresh
+            </button>
+            <button class="btn btn-delete-all" id="deleteAllBtn">
+                🗑️ Delete All
+            </button>
+            <button class="btn btn-export" id="exportBtn">
+                💾 Export
+            </button>
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search items...">
+        </div>
+
+        <div class="tab-content active" id="readContent">
+            <div class="items-list" id="readList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📚</div>
+                    <div class="empty-state-text">No reading items yet</div>
+                    <div class="empty-state-subtext">Upload a file with @read tags to get started</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="watchContent">
+            <div class="items-list" id="watchList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎬</div>
+                    <div class="empty-state-text">No watch items yet</div>
+                    <div class="empty-state-subtext">Upload a file with @watch tags to get started</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tasksContent">
+            <div class="items-list" id="tasksList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">✅</div>
+                    <div class="empty-state-text">No tasks yet</div>
+                    <div class="empty-state-subtext">Upload a file with @task tags to get started</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="contentContent">
+            <div class="items-list" id="contentList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💡</div>
+                    <div class="empty-state-text">No content items yet</div>
+                    <div class="empty-state-subtext">Upload a file with @content tags to get started</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State management
+        let parsedData = {
+            read: [],
+            watch: [],
+            tasks: [],
+            content: []
+        };
+        let currentFileName = '';
+        let activeTab = 'read';
+
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const deleteAllBtn = document.getElementById('deleteAllBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const searchBox = document.getElementById('searchBox');
+        const toast = document.getElementById('toast');
+        const tabs = document.querySelectorAll('.tab');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            fileInput.addEventListener('change', handleFileUpload);
+            refreshBtn.addEventListener('click', refreshData);
+            deleteAllBtn.addEventListener('click', deleteAll);
+            exportBtn.addEventListener('click', exportData);
+            searchBox.addEventListener('input', handleSearch);
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            
+            if (!file) return;
+
+            const validExtensions = ['.md', '.txt'];
+            const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            
+            if (!validExtensions.includes(fileExtension)) {
+                showToast('❌ Invalid file type. Please upload .md or .txt files only.');
+                return;
+            }
+
+            currentFileName = file.name;
+            fileNameDisplay.textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const content = e.target.result;
+                    parseContent(content);
+                    updateUI();
+                    showToast('✅ File parsed successfully!');
+                } catch (error) {
+                    showToast('❌ Error parsing file: ' + error.message);
+                    console.error('Parse error:', error);
+                }
+            };
+
+            reader.onerror = () => {
+                showToast('❌ Error reading file');
+            };
+
+            reader.readAsText(file);
+        }
+
+        function parseContent(content) {
+            parsedData = {
+                read: [],
+                watch: [],
+                tasks: [],
+                content: []
+            };
+
+            const lines = content.split('\n');
+            
+            lines.forEach((line, lineIndex) => {
+                const lineNumber = lineIndex + 1;
+                
+                parseTag(line, lineNumber, /@read\s+(.+?)(?=@|$)/gi, 'read');
+                parseTag(line, lineNumber, /@tasks?\s+(.+?)(?=@|$)/gi, 'tasks');
+                parseTag(line, lineNumber, /@watch\s+(.+?)(?=@|$)/gi, 'watch');
+                parseTag(line, lineNumber, /@content\s+(.+?)(?=@|$)/gi, 'content');
+            });
+        }
+
+        function parseTag(line, lineNumber, regex, category) {
+            let match;
+            
+            while ((match = regex.exec(line)) !== null) {
+                const content = match[1].trim();
+                
+                if (content) {
+                    const item = {
+                        content: content,
+                        lineNumber: lineNumber,
+                        context: line.trim(),
+                        completed: false,
+                        id: Date.now() + Math.random()
+                    };
+                    
+                    parsedData[category].push(item);
+                }
+            }
+        }
+
+        function updateUI() {
+            updateBadges();
+            renderCategory('read');
+            renderCategory('watch');
+            renderCategory('tasks');
+            renderCategory('content');
+        }
+
+        function updateBadges() {
+            document.getElementById('readBadge').textContent = parsedData.read.length;
+            document.getElementById('watchBadge').textContent = parsedData.watch.length;
+            document.getElementById('tasksBadge').textContent = parsedData.tasks.length;
+            document.getElementById('contentBadge').textContent = parsedData.content.length;
+        }
+
+        function renderCategory(category) {
+            const listElement = document.getElementById(`${category}List`);
+            const items = parsedData[category];
+
+            if (items.length === 0) {
+                listElement.innerHTML = getEmptyState(category);
+                return;
+            }
+
+            listElement.innerHTML = items.map(item => createItemHTML(category, item)).join('');
+            
+            // Add event listeners
+            listElement.querySelectorAll('.btn-view').forEach(btn => {
+                btn.addEventListener('click', (e) => viewItem(e.target.closest('button').dataset.content));
+            });
+
+            listElement.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', (e) => deleteItem(category, parseFloat(e.target.closest('button').dataset.id)));
+            });
+
+            listElement.querySelectorAll('.btn-copy').forEach(btn => {
+                btn.addEventListener('click', (e) => copyToClipboard(e.target.closest('button').dataset.content));
+            });
+
+            if (category === 'tasks') {
+                listElement.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => toggleTask(parseFloat(e.target.dataset.id)));
+                });
+            }
+        }
+
+        function createItemHTML(category, item) {
+            const processedContent = (category === 'read' || category === 'watch') 
+                ? linkifyURLs(item.content) 
+                : escapeHtml(item.content);
+
+            const itemClass = item.completed ? 'item completed' : 'item';
+
+            if (category === 'tasks') {
+                return `
+                    <div class="${itemClass}">
+                        <div class="item-left">
+                            <div class="task-item-wrapper">
+                                <input type="checkbox" class="task-checkbox" data-id="${item.id}" ${item.completed ? 'checked' : ''}>
+                                <div>
+                                    <div class="item-content">${processedContent}</div>
+                                    <div class="item-meta">Line ${item.lineNumber}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-actions">
+                            <button class="item-btn btn-copy" data-content="${escapeHtml(item.content)}" title="Copy">
+                                📋 Copy
+                            </button>
+                            <button class="item-btn btn-delete" data-id="${item.id}" title="Delete">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="${itemClass}">
+                    <div class="item-left">
+                        <div class="item-content">${processedContent}</div>
+                        <div class="item-meta">Line ${item.lineNumber}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button class="item-btn btn-view" data-content="${escapeHtml(item.content)}" title="View">
+                            👁️ View
+                        </button>
+                        <button class="item-btn btn-delete" data-id="${item.id}" title="Delete">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getEmptyState(category) {
+            const states = {
+                read: { icon: '📚', text: 'No reading items yet', subtext: 'Upload a file with @read tags to get started' },
+                watch: { icon: '🎬', text: 'No watch items yet', subtext: 'Upload a file with @watch tags to get started' },
+                tasks: { icon: '✅', text: 'No tasks yet', subtext: 'Upload a file with @task tags to get started' },
+                content: { icon: '💡', text: 'No content items yet', subtext: 'Upload a file with @content tags to get started' }
+            };
+
+            const state = states[category];
+            return `
+                <div class="empty-state">
+                    <div class="empty-state-icon">${state.icon}</div>
+                    <div class="empty-state-text">${state.text}</div>
+                    <div class="empty-state-subtext">${state.subtext}</div>
+                </div>
+            `;
+        }
+
+        function linkifyURLs(text) {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            const escapedText = escapeHtml(text);
+            return escapedText.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+
+            // Update tab buttons
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}Content`).classList.add('active');
+        }
+
+        function viewItem(content) {
+            // Check if it's a URL
+            const urlRegex = /https?:\/\/[^\s]+/;
+            const match = content.match(urlRegex);
+            
+            if (match) {
+                window.open(match[0], '_blank');
+            } else {
+                alert(content);
+            }
+        }
+
+        function deleteItem(category, itemId) {
+            if (confirm('Delete this item?')) {
+                parsedData[category] = parsedData[category].filter(item => item.id !== itemId);
+                updateUI();
+                showToast('🗑️ Item deleted');
+            }
+        }
+
+        function toggleTask(taskId) {
+            const task = parsedData.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                renderCategory('tasks');
+            }
+        }
+
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast('📋 Copied to clipboard!');
+            } catch (err) {
+                showToast('❌ Failed to copy');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function refreshData() {
+            if (fileInput.files[0]) {
+                handleFileUpload({ target: fileInput });
+            } else {
+                showToast('⚠️ No file to refresh');
+            }
+        }
+
+        function deleteAll() {
+            if (confirm('Are you sure you want to delete all data?')) {
+                parsedData = {
+                    read: [],
+                    watch: [],
+                    tasks: [],
+                    content: []
+                };
+                currentFileName = '';
+                fileNameDisplay.textContent = 'No file selected';
+                fileInput.value = '';
+                searchBox.value = '';
+                updateUI();
+                showToast('🗑️ All data deleted');
+            }
+        }
+
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            
+            if (!searchTerm) {
+                updateUI();
+                return;
+            }
+
+            const filtered = {
+                read: parsedData.read.filter(item => 
+                    item.content.toLowerCase().includes(searchTerm) ||
+                    item.context.toLowerCase().includes(searchTerm)
+                ),
+                watch: parsedData.watch.filter(item => 
+                    item.content.toLowerCase().includes(searchTerm) ||
+                    item.context.toLowerCase().includes(searchTerm)
+                ),
+                tasks: parsedData.tasks.filter(item => 
+                    item.content.toLowerCase().includes(searchTerm) ||
+                    item.context.toLowerCase().includes(searchTerm)
+                ),
+                content: parsedData.content.filter(item => 
+                    item.content.toLowerCase().includes(searchTerm) ||
+                    item.context.toLowerCase().includes(searchTerm)
+                )
+            };
+
+            // Temporarily replace data for rendering
+            const originalData = { ...parsedData };
+            parsedData = filtered;
+            renderCategory('read');
+            renderCategory('watch');
+            renderCategory('tasks');
+            renderCategory('content');
+            parsedData = originalData;
+        }
+
+        function exportData() {
+            if (!currentFileName) {
+                showToast('⚠️ No file loaded to export');
+                return;
+            }
+
+            const exportObj = {
+                fileName: currentFileName,
+                timestamp: new Date().toISOString(),
+                data: parsedData,
+                summary: {
+                    total: parsedData.read.length + parsedData.watch.length + parsedData.tasks.length + parsedData.content.length,
+                    read: parsedData.read.length,
+                    watch: parsedData.watch.length,
+                    tasks: parsedData.tasks.length,
+                    content: parsedData.content.length
+                }
+            };
+
+            const dataStr = JSON.stringify(exportObj, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `note-processor-export-${Date.now()}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+            showToast('💾 Data exported successfully!');
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+Type,Name,Amount,Category,Date
+Expense,Grocery Shopping,125.50,Food,2024-01-15
+Expense,Monthly Rent,1200.00,Rent,2024-01-01
+Expense,Gas Station,45.20,Transport,2024-01-10
+Expense,Netflix Subscription,15.99,Subscriptions,2024-01-05
+Expense,Restaurant Dinner,68.75,Food,2024-01-18
+Expense,Office Supplies,89.30,Business,2024-01-12
+Expense,Phone Bill,85.00,Utilities,2024-01-08
+Expense,Gym Membership,49.99,Health,2024-01-03
+Expense,Amazon Purchase,156.40,Shopping,2024-01-20
+Expense,Coffee Shop,12.50,Food,2024-01-22
+Income,Salary,3500.00,Salary,2024-01-01
+Income,Freelance Project,800.00,Business,2024-01-15
+Income,Investment Return,120.50,Investment,2024-01-25
+Expense,Car Insurance,180.00,Transport,2024-01-02
+Expense,Electricity Bill,95.30,Utilities,2024-01-14
+Income,Part-time Job,600.00,Salary,2024-01-10
+Expense,Medical Checkup,250.00,Health,2024-01-16
+Expense,Concert Tickets,120.00,Entertainment,2024-01-19
+Expense,Bookstore,45.60,Shopping,2024-01-21
+Income,Bonus,500.00,Salary,2024-01-28

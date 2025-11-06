@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Feed Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .news-source {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .news-category {
+            background: #e0e7ff;
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .news-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1a202c;
+            line-height: 1.4;
+        }
+
+        .news-description {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .news-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .news-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .top-stories {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .top-stories h2 {
+            color: #1a202c;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .story-item {
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .story-item:hover {
+            background: #edf2f7;
+        }
+
+        .story-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        .story-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+
+        .story-text {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 AI News Feed Dashboard</h1>
+            <p class="subtitle">Your curated source for the latest AI developments • Updated November 6, 2025</p>
+        </header>
+
+        <div class="top-stories">
+            <h2>📰 Top 5 Stories Right Now</h2>
+            
+            <div class="story-item">
+                <span class="story-number">1</span>
+                <div class="story-title">Apple-Google $1B Siri Deal</div>
+                <p class="story-text">Apple is nearing a deal with Google to pay roughly $1 billion annually for a custom version of Google's Gemini AI model to power an overhaul of Siri. The custom AI model would have 1.2 trillion parameters, roughly eight times more complex than Apple's current model. Expected launch: Spring 2026.</p>
+                <a href="https://techcrunch.com/2025/11/05/apple-nears-deal-to-pay-google-1b-annually-to-power-new-siri-report-says/" class="news-link" target="_blank">Read More →</a>
+            </div>
+
+            <div class="story-item">
+                <span class="story-number">2</span>
+                <div class="story-title">OpenAI's $38B Amazon Cloud Deal</div>
+                <p class="story-text">OpenAI announced a $38 billion deal with Amazon to buy cloud computing services over the next seven years, with all capacity targeted to be deployed before the end of 2026. This follows OpenAI's restructuring which freed the company from needing Microsoft's approval.</p>
+                <a href="https://techcrunch.com/2025/11/03/openai-and-amazon-ink-38b-cloud-computing-deal/" class="news-link" target="_blank">Read More →</a>
+            </div>
+
+            <div class="story-item">
+                <span class="story-number">3</span>
+                <div class="story-title">Microsoft's AI Agent Testing Reveals Vulnerabilities</div>
+                <p class="story-text">Microsoft researchers released a new simulation environment called "Magentic Marketplace" designed to test AI agents, along with research showing that current agentic models may be vulnerable to manipulation when working unsupervised.</p>
+                <a href="https://techcrunch.com/2025/11/05/microsoft-built-a-synthetic-marketplace-for-testing-ai-agents/" class="news-link" target="_blank">Read More →</a>
+            </div>
+
+            <div class="story-item">
+                <span class="story-number">4</span>
+                <div class="story-title">Meta's AI Spending Problem</div>
+                <p class="story-text">Meta reported operating expenses jumping $7 billion year-over-year due to intense AI spending, which has yet to bring in meaningful revenue. The company's stock dropped 12%, representing over $200 billion in lost market cap.</p>
+                <a href="https://techcrunch.com/2025/11/02/meta-has-an-ai-product-problem/" class="news-link" target="_blank">Read More →</a>
+            </div>
+
+            <div class="story-item">
+                <span class="story-number">5</span>
+                <div class="story-title">Nvidia-Deutsche Telekom €1B AI Factory</div>
+                <p class="story-text">Nvidia signed a €1 billion partnership with Deutsche Telekom to set up an "AI factory" in Munich that aims to boost Germany's AI computing power by 50%, using more than 1,000 Nvidia DGX B200 systems with up to 10,000 Blackwell GPUs.</p>
+                <a href="https://techcrunch.com/2025/11/04/nvidia-deutsche-telekom-strike-e1b-partnership-for-a-data-center-in-munich/" class="news-link" target="_blank">Read More →</a>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="🔍 Search news sources...">
+            </div>
+            <div class="filter-group">
+                <button class="filter-btn active" data-category="all">All Sources</button>
+                <button class="filter-btn" data-category="tech">Tech News</button>
+                <button class="filter-btn" data-category="research">Research</button>
+                <button class="filter-btn" data-category="company">Company Updates</button>
+            </div>
+        </div>
+
+        <div class="news-grid" id="newsGrid">
+            <!-- News cards will be inserted here -->
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            No sources found matching your search.
+        </div>
+    </div>
+
+    <script>
+        const newsSources = [
+            {
+                source: "TechCrunch AI",
+                category: "tech",
+                title: "Comprehensive AI Coverage",
+                description: "Daily updates on AI companies, products, and industry trends with in-depth analysis and breaking news from the tech world.",
+                url: "https://techcrunch.com/category/artificial-intelligence/"
+            },
+            {
+                source: "Future Tools",
+                category: "tech",
+                title: "Curated AI News",
+                description: "Matt Wolfe's expert picks highlighting the most important AI developments with focus on practical applications and tools.",
+                url: "https://www.futuretools.io/news"
+            },
+            {
+                source: "OpenTools AI News",
+                category: "tech",
+                title: "Daily AI Insights",
+                description: "Curated AI news with focus on practical tools and workflows for productivity, updated daily with the latest developments.",
+                url: "https://opentools.ai/news"
+            },
+            {
+                source: "Google AI Blog",
+                category: "company",
+                title: "Official Google Updates",
+                description: "Official updates on Gemini, AI Mode, and Google's latest AI product releases directly from the source.",
+                url: "https://blog.google/technology/ai/"
+            },
+            {
+                source: "Crescendo AI News",
+                category: "tech",
+                title: "AI Breakthroughs Roundup",
+                description: "Comprehensive roundup of AI breakthroughs and updates across multiple sectors with detailed summaries.",
+                url: "https://www.crescendo.ai/news/latest-ai-news-and-updates"
+            },
+            {
+                source: "AI News",
+                category: "tech",
+                title: "Market Trends & Analysis",
+                description: "Dedicated AI news site covering market trends, hardware developments, and comprehensive industry analysis.",
+                url: "https://www.artificialintelligence-news.com/"
+            },
+            {
+                source: "Adobe Newsroom",
+                category: "company",
+                title: "Creative AI Tools",
+                description: "Updates on Creative Cloud AI tools, Firefly models, and creative AI innovations from Adobe's official source.",
+                url: "https://news.adobe.com/"
+            },
+            {
+                source: "VentureBeat AI",
+                category: "tech",
+                title: "Enterprise AI Focus",
+                description: "Transformative tech coverage focusing on enterprise AI deployments, with insights on scaling and implementation.",
+                url: "https://venturebeat.com/category/ai"
+            },
+            {
+                source: "Microsoft Research",
+                category: "research",
+                title: "AI Research & Testing",
+                description: "Research updates and testing environments for AI agents, enterprise applications, and cutting-edge developments.",
+                url: "https://www.microsoft.com/en-us/research/"
+            },
+            {
+                source: "Nvidia Newsroom",
+                category: "company",
+                title: "Hardware & Infrastructure",
+                description: "Updates on AI hardware, partnerships, and infrastructure developments from the leading GPU manufacturer.",
+                url: "https://nvidianews.nvidia.com/"
+            },
+            {
+                source: "ScienceDaily AI",
+                category: "research",
+                title: "Scientific Research",
+                description: "Latest AI research from universities and labs, covering quantum computing, robotics, and breakthrough discoveries.",
+                url: "https://www.sciencedaily.com/news/computers_math/artificial_intelligence/"
+            },
+            {
+                source: "OpenAI Blog",
+                category: "company",
+                title: "OpenAI Updates",
+                description: "Official announcements and updates about GPT models, ChatGPT features, and OpenAI's latest developments.",
+                url: "https://openai.com/news/"
+            },
+            {
+                source: "Anthropic News",
+                category: "company",
+                title: "Claude & AI Safety",
+                description: "Updates on Claude models, AI safety research, and Anthropic's approach to responsible AI development.",
+                url: "https://www.anthropic.com/news"
+            },
+            {
+                source: "Hugging Face Blog",
+                category: "research",
+                title: "Open Source AI",
+                description: "Community-driven AI news focusing on open-source models, datasets, and collaborative machine learning.",
+                url: "https://huggingface.co/blog"
+            },
+            {
+                source: "The Verge AI",
+                category: "tech",
+                title: "Consumer AI Tech",
+                description: "Consumer-focused coverage of AI products, gadgets, and how AI is changing everyday technology.",
+                url: "https://www.theverge.com/ai-artificial-intelligence"
+            }
+        ];
+
+        const newsGrid = document.getElementById('newsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const noResults = document.getElementById('noResults');
+
+        let currentFilter = 'all';
+
+        function renderNews(sources) {
+            newsGrid.innerHTML = '';
+            
+            if (sources.length === 0) {
+                noResults.style.display = 'block';
+                newsGrid.style.display = 'none';
+                return;
+            }
+
+            noResults.style.display = 'none';
+            newsGrid.style.display = 'grid';
+
+            sources.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                card.innerHTML = `
+                    <div class="news-header">
+                        <div class="news-source">${item.source}</div>
+                        <div class="news-category">${item.category}</div>
+                    </div>
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-description">${item.description}</div>
+                    <a href="${item.url}" class="news-link" target="_blank">Visit Source →</a>
+                `;
+                newsGrid.appendChild(card);
+            });
+        }
+
+        function filterNews() {
+            const searchTerm = searchInput.value.toLowerCase();
+            let filtered = newsSources;
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(item => item.category === currentFilter);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.source.toLowerCase().includes(searchTerm) ||
+                    item.title.toLowerCase().includes(searchTerm) ||
+                    item.description.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            renderNews(filtered);
+        }
+
+        searchInput.addEventListener('input', filterNews);
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentFilter = button.dataset.category;
+                filterNews();
+            });
+        });
+
+        // Initial render
+        renderNews(newsSources);
+    </script>
+</body>
+</html>

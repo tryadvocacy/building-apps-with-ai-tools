@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Common Web App Patterns Demo</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333;
+            --border-color: #ddd;
+            --card-bg: #f9f9f9;
+            --primary-color: black;
+            --success-color: #4CAF50;
+            --error-color: #f44336;
+        }
+
+        .dark-mode {
+            --bg-color: #1e1e1e;
+            --text-color: #f1f1f1;
+            --border-color: #444;
+            --card-bg: #2d2d2d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .pattern-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .pattern-section h2 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .pattern-section p {
+            margin-bottom: 15px;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        /* Pattern 1: Toggle Visibility */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+        }
+
+        /* Pattern 2: Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Pattern 3: Filtering/Searching */
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .item {
+            padding: 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+
+        .item:hover {
+            background: var(--border-color);
+        }
+
+        /* Pattern 4: Notifications */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            background-color: #333;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: var(--success-color);
+        }
+
+        .notification.error {
+            background-color: var(--error-color);
+        }
+
+        /* Pattern 5: Loading States */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pattern 6: Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pattern 7: Form Validation */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .form-group input.invalid {
+            border-color: var(--error-color);
+        }
+
+        .error {
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Pattern 8: Debouncing Demo */
+        .debounce-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            min-height: 50px;
+        }
+
+        /* Pattern 9: Timer/Countdown */
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        /* Pattern 10: Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 30px;
+            background-color: var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-error {
+            background: var(--error-color);
+        }
+
+        .btn-error:hover {
+            background: #da190b;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle">🌓 Toggle Theme</button>
+
+    <div class="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="container">
+        <h1>Common Web App Patterns Demo</h1>
+
+        <!-- Pattern 1: Toggle Visibility -->
+        <section class="pattern-section">
+            <h2>1. Toggle Visibility (Modal)</h2>
+            <p>Click the button to show/hide a modal dialog.</p>
+            <div class="button-group">
+                <button class="btn open-modal">Open Modal</button>
+            </div>
+        </section>
+
+        <div class="modal">
+            <div class="modal-content">
+                <h3>This is a Modal!</h3>
+                <p>Modals are great for displaying important information or forms without navigating away from the current page.</p>
+                <button class="btn btn-secondary close-modal">Close</button>
+            </div>
+        </div>
+
+        <!-- Pattern 2: Tabs -->
+        <section class="pattern-section">
+            <h2>2. Tabs</h2>
+            <p>Switch between different content sections.</p>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab1">Tab 1</button>
+                <button class="tab-btn" data-tab="tab2">Tab 2</button>
+                <button class="tab-btn" data-tab="tab3">Tab 3</button>
+            </div>
+            <div class="tab-content active" id="tab1">
+                <h3>Tab 1 Content</h3>
+                <p>This is the content for the first tab. Tabs are useful for organizing related content without taking up too much space.</p>
+            </div>
+            <div class="tab-content" id="tab2">
+                <h3>Tab 2 Content</h3>
+                <p>This is the second tab's content. You can have as many tabs as you need!</p>
+            </div>
+            <div class="tab-content" id="tab3">
+                <h3>Tab 3 Content</h3>
+                <p>And here's the third tab. Notice how switching tabs is smooth and instant.</p>
+            </div>
+        </section>
+
+        <!-- Pattern 3: Filtering/Searching -->
+        <section class="pattern-section">
+            <h2>3. Filtering/Searching</h2>
+            <p>Type to filter the list below in real-time.</p>
+            <input type="text" id="search" class="search-input" placeholder="Search items...">
+            <div id="item-list">
+                <div class="item">Apple</div>
+                <div class="item">Banana</div>
+                <div class="item">Cherry</div>
+                <div class="item">Date</div>
+                <div class="item">Elderberry</div>
+                <div class="item">Fig</div>
+                <div class="item">Grape</div>
+                <div class="item">Honeydew</div>
+            </div>
+        </section>
+
+        <!-- Pattern 4: Notifications -->
+        <section class="pattern-section">
+            <h2>4. Notifications/Toasts</h2>
+            <p>Display temporary notification messages.</p>
+            <div class="button-group">
+                <button class="btn btn-success" onclick="showNotification('Success! Operation completed.', 'success')">Show Success</button>
+                <button class="btn btn-error" onclick="showNotification('Error! Something went wrong.', 'error')">Show Error</button>
+            </div>
+        </section>
+
+        <!-- Pattern 5: Loading States -->
+        <section class="pattern-section">
+            <h2>5. Loading States</h2>
+            <p>Show a loading spinner during async operations.</p>
+            <button class="btn" id="loading-demo-btn">Simulate Loading (2s)</button>
+        </section>
+
+        <!-- Pattern 7: Form Validation -->
+        <section class="pattern-section">
+            <h2>7. Form Validation</h2>
+            <p>Try submitting the form with invalid data.</p>
+            <form id="validation-form">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password (min 8 characters):</label>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+                <button type="submit" class="btn">Submit Form</button>
+            </form>
+        </section>
+
+        <!-- Pattern 8: Debouncing -->
+        <section class="pattern-section">
+            <h2>8. Debouncing (Performance)</h2>
+            <p>Type quickly - search only happens 500ms after you stop typing.</p>
+            <input type="text" id="debounce-input" class="search-input" placeholder="Type something...">
+            <div class="debounce-output">
+                <p><strong>Search count:</strong> <span id="search-count">0</span></p>
+                <p><strong>Last search:</strong> <span id="last-search">-</span></p>
+            </div>
+        </section>
+
+        <!-- Pattern 9: Timer/Countdown -->
+        <section class="pattern-section">
+            <h2>9. Timer/Countdown</h2>
+            <p>A simple countdown timer.</p>
+            <div class="timer-display" id="timer-display">1:00</div>
+            <div class="timer-controls">
+                <button class="btn btn-success" id="timer-start">Start</button>
+                <button class="btn btn-secondary" id="timer-stop">Stop</button>
+                <button class="btn" id="timer-reset">Reset</button>
+            </div>
+        </section>
+
+        <!-- Pattern 10: Progress Bar -->
+        <section class="pattern-section">
+            <h2>10. Progress Bar</h2>
+            <p>Simulates a progressive loading bar like in real applications.</p>
+            <div class="progress-container">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                <div class="progress-text" id="progress-text">0%</div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-success" id="start-progress">Start Loading</button>
+                <button class="btn btn-secondary" id="reset-progress">Reset</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Pattern 1: Toggle Visibility (Modal)
+        const modal = document.querySelector('.modal');
+        const openBtn = document.querySelector('.open-modal');
+        const closeBtn = document.querySelector('.close-modal');
+
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('show');
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('show');
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+
+        // Pattern 2: Tabs
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active from all
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active to clicked
+                button.classList.add('active');
+                const tabId = button.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Pattern 3: Filtering/Searching
+        const searchInput = document.querySelector('#search');
+        const items = document.querySelectorAll('#item-list .item');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Pattern 4: Notifications/Toasts
+        function showNotification(message, type = 'success', duration = 3000) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            // Show with animation
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+
+            // Hide after duration
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, duration);
+        }
+
+        // Pattern 5: Loading States
+        const loadingDemo = document.getElementById('loading-demo-btn');
+        const loading = document.querySelector('.loading');
+
+        function showLoading() {
+            loading.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loading.style.display = 'none';
+        }
+
+        loadingDemo.addEventListener('click', async () => {
+            showLoading();
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            hideLoading();
+            showNotification('Loading complete!', 'success');
+        });
+
+        // Pattern 6: Theme Toggle (Dark Mode)
+        const themeToggle = document.querySelector('.theme-toggle');
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+
+        // Apply saved theme
+        if (darkMode) {
+            document.body.classList.add('dark-mode');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', darkMode);
+            showNotification(`${darkMode ? 'Dark' : 'Light'} mode activated`, 'success');
+        });
+
+        // Pattern 7: Form Validation
+        const form = document.getElementById('validation-form');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Clear previous errors
+            document.querySelectorAll('.error').forEach(el => el.remove());
+            email.classList.remove('invalid');
+            password.classList.remove('invalid');
+
+            let isValid = true;
+
+            // Validate email
+            if (!email.value.includes('@')) {
+                showError(email, 'Please enter a valid email');
+                isValid = false;
+            }
+
+            // Validate password
+            if (password.value.length < 8) {
+                showError(password, 'Password must be at least 8 characters');
+                isValid = false;
+            }
+
+            if (isValid) {
+                showNotification('Form is valid! ✓', 'success');
+                form.reset();
+            } else {
+                showNotification('Please fix form errors', 'error');
+            }
+        });
+
+        function showError(input, message) {
+            const error = document.createElement('div');
+            error.className = 'error';
+            error.textContent = message;
+            input.parentElement.appendChild(error);
+            input.classList.add('invalid');
+        }
+
+        // Pattern 8: Debouncing
+        function debounce(func, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                }, delay);
+            };
+        }
+
+        const debounceInput = document.getElementById('debounce-input');
+        const searchCount = document.getElementById('search-count');
+        const lastSearch = document.getElementById('last-search');
+        let count = 0;
+
+        const debouncedSearch = debounce((value) => {
+            count++;
+            searchCount.textContent = count;
+            lastSearch.textContent = value || '(empty)';
+        }, 500);
+
+        debounceInput.addEventListener('input', (e) => {
+            debouncedSearch(e.target.value);
+        });
+
+        // Pattern 9: Timer/Countdown
+        class Timer {
+            constructor(duration, displayElement) {
+                this.duration = duration;
+                this.remaining = duration;
+                this.intervalId = null;
+                this.displayElement = displayElement;
+            }
+
+            start(callback) {
+                if (this.intervalId) return; // Already running
+
+                this.intervalId = setInterval(() => {
+                    this.remaining--;
+                    this.updateDisplay();
+
+                    if (this.remaining <= 0) {
+                        this.stop();
+                        if (callback) callback();
+                    }
+                }, 1000);
+            }
+
+            stop() {
+                clearInterval(this.intervalId);
+                this.intervalId = null;
+            }
+
+            reset() {
+                this.stop();
+                this.remaining = this.duration;
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                const minutes = Math.floor(this.remaining / 60);
+                const seconds = this.remaining % 60;
+                this.displayElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        const timerDisplay = document.getElementById('timer-display');
+        const timer = new Timer(60, timerDisplay);
+
+        document.getElementById('timer-start').addEventListener('click', () => {
+            timer.start(() => {
+                showNotification('Time is up!', 'success');
+            });
+        });
+
+        document.getElementById('timer-stop').addEventListener('click', () => {
+            timer.stop();
+        });
+
+        document.getElementById('timer-reset').addEventListener('click', () => {
+            timer.reset();
+        });
+
+        // Pattern 10: Progress Bar
+        let progressInterval = null;
+        let currentProgress = 0;
+
+        function updateProgress(percentage) {
+            const progressBar = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            currentProgress = percentage;
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = `${percentage}%`;
+
+            if (percentage === 100) {
+                showNotification('Progress complete!', 'success');
+                stopProgress();
+            }
+        }
+
+        function startProgressiveLoading() {
+            // Reset first
+            currentProgress = 0;
+            updateProgress(0);
+
+            // Clear any existing interval
+            if (progressInterval) {
+                clearInterval(progressInterval);
+            }
+
+            // Simulate progressive loading
+            progressInterval = setInterval(() => {
+                if (currentProgress < 100) {
+                    // Increment by random amount between 1-5% for realistic effect
+                    const increment = Math.floor(Math.random() * 5) + 1;
+                    currentProgress = Math.min(currentProgress + increment, 100);
+                    updateProgress(currentProgress);
+                } else {
+                    stopProgress();
+                }
+            }, 200); // Update every 200ms
+        }
+
+        function stopProgress() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function resetProgress() {
+            stopProgress();
+            currentProgress = 0;
+            updateProgress(0);
+        }
+
+        document.getElementById('start-progress').addEventListener('click', startProgressiveLoading);
+        document.getElementById('reset-progress').addEventListener('click', resetProgress);
+
+        // Initialize with 0%
+        updateProgress(0);
+    </script>
+</body>
+</html>

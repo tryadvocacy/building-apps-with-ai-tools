@@ -1,0 +1,356 @@
+[
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-01-15",
+    "billingPeriod": "2023-12-15 to 2024-01-15",
+    "total": 145.67,
+    "breakdown": {
+      "electricity": 89.45,
+      "gas": 42.30,
+      "delivery": 8.92,
+      "taxes": 5.00
+    },
+    "usage": {
+      "electricity_kwh": 485,
+      "gas_therms": 42
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-02-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-02-15",
+    "billingPeriod": "2024-01-15 to 2024-02-15",
+    "total": 178.34,
+    "breakdown": {
+      "electricity": 112.50,
+      "gas": 52.80,
+      "delivery": 9.24,
+      "taxes": 5.80
+    },
+    "usage": {
+      "electricity_kwh": 612,
+      "gas_therms": 48
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-03-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-03-15",
+    "billingPeriod": "2024-02-15 to 2024-03-15",
+    "total": 156.23,
+    "breakdown": {
+      "electricity": 95.67,
+      "gas": 46.20,
+      "delivery": 8.56,
+      "taxes": 5.80
+    },
+    "usage": {
+      "electricity_kwh": 520,
+      "gas_therms": 44
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-04-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-04-15",
+    "billingPeriod": "2024-03-15 to 2024-04-15",
+    "total": 132.45,
+    "breakdown": {
+      "electricity": 78.90,
+      "gas": 38.50,
+      "delivery": 9.05,
+      "taxes": 6.00
+    },
+    "usage": {
+      "electricity_kwh": 428,
+      "gas_therms": 35
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-05-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-05-15",
+    "billingPeriod": "2024-04-15 to 2024-05-15",
+    "total": 118.90,
+    "breakdown": {
+      "electricity": 67.45,
+      "gas": 35.20,
+      "delivery": 10.25,
+      "taxes": 6.00
+    },
+    "usage": {
+      "electricity_kwh": 365,
+      "gas_therms": 32
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-06-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Pacific Gas & Electric",
+    "service": "Electricity & Gas",
+    "date": "2024-06-15",
+    "billingPeriod": "2024-05-15 to 2024-06-15",
+    "total": 142.78,
+    "breakdown": {
+      "electricity": 89.20,
+      "gas": 36.80,
+      "delivery": 10.78,
+      "taxes": 6.00
+    },
+    "usage": {
+      "electricity_kwh": 485,
+      "gas_therms": 33
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "PG&E-123456789",
+    "dueDate": "2024-07-05"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-01-01",
+    "billingPeriod": "2024-01-01 to 2024-01-31",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-01-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-02-01",
+    "billingPeriod": "2024-02-01 to 2024-02-29",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-02-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-03-01",
+    "billingPeriod": "2024-03-01 to 2024-03-31",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-03-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-04-01",
+    "billingPeriod": "2024-04-01 to 2024-04-30",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-04-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-05-01",
+    "billingPeriod": "2024-05-01 to 2024-05-31",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-05-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "Verizon",
+    "service": "Internet",
+    "date": "2024-06-01",
+    "billingPeriod": "2024-06-01 to 2024-06-30",
+    "total": 79.99,
+    "breakdown": {
+      "service": 69.99,
+      "equipment": 10.00,
+      "taxes": 0.00
+    },
+    "usage": {
+      "data_gb": "Unlimited"
+    },
+    "paymentMethod": "Auto Pay",
+    "accountNumber": "VZ-987654321",
+    "dueDate": "2024-06-25"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-01-10",
+    "billingPeriod": "2023-12-10 to 2024-01-10",
+    "total": 68.45,
+    "breakdown": {
+      "water": 42.30,
+      "sewer": 20.15,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 3200
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-01-30"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-02-10",
+    "billingPeriod": "2024-01-10 to 2024-02-10",
+    "total": 72.30,
+    "breakdown": {
+      "water": 45.20,
+      "sewer": 21.10,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 3400
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-02-28"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-03-10",
+    "billingPeriod": "2024-02-10 to 2024-03-10",
+    "total": 75.60,
+    "breakdown": {
+      "water": 47.80,
+      "sewer": 21.80,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 3600
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-03-30"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-04-10",
+    "billingPeriod": "2024-03-10 to 2024-04-10",
+    "total": 78.90,
+    "breakdown": {
+      "water": 50.40,
+      "sewer": 22.50,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 3800
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-04-30"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-05-10",
+    "billingPeriod": "2024-04-10 to 2024-05-10",
+    "total": 82.15,
+    "breakdown": {
+      "water": 52.60,
+      "sewer": 23.55,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 4000
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-05-30"
+  },
+  {
+    "receiptType": "utilities",
+    "provider": "City Water Department",
+    "service": "Water & Sewer",
+    "date": "2024-06-10",
+    "billingPeriod": "2024-05-10 to 2024-06-10",
+    "total": 85.40,
+    "breakdown": {
+      "water": 54.80,
+      "sewer": 24.60,
+      "fees": 6.00
+    },
+    "usage": {
+      "water_gallons": 4200
+    },
+    "paymentMethod": "Check",
+    "accountNumber": "WTR-456789123",
+    "dueDate": "2024-06-30"
+  }
+]
