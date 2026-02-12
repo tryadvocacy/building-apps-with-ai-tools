@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame 2: The Context Window</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #F5F3EB;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            width: 1200px;
+            height: 675px;
+            background: #F5F3EB;
+            position: relative;
+            padding: 30px 50px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content {
+            display: flex;
+            gap: 50px;
+            height: calc(100% - 100px);
+        }
+        .jar-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .jar-container {
+            position: relative;
+            width: 280px;
+            height: 420px;
+        }
+        .jar {
+            width: 100%;
+            height: 100%;
+            border: 3px solid #000;
+            background: white;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
+        }
+        .capacity-line {
+            position: absolute;
+            top: 0;
+            left: -30px;
+            right: -30px;
+            border-top: 2px dashed #E86B5A;
+            z-index: 10;
+        }
+        .capacity-label {
+            position: absolute;
+            top: -25px;
+            right: -25px;
+            background: #E86B5A;
+            color: white;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 2px solid #000;
+        }
+        .jar-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            white-space: nowrap;
+        }
+        .jar-sublabel {
+            font-size: 12px;
+            font-weight: 400;
+            color: #5C5750;
+        }
+        .message-block {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 500;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+        .user-block {
+            background: #5B9BD5;
+            color: white;
+            height: 25px;
+        }
+        .assistant-block {
+            background: #F5F4F1;
+            color: #2A2825;
+            height: 30px;
+        }
+        .tool-block {
+            background: #F5C542;
+            color: #2A2825;
+            height: 70px;
+            font-size: 10px;
+        }
+        .tool-block.large {
+            height: 100px;
+        }
+        .system-block {
+            background: #7CB56B;
+            color: white;
+            height: 20px;
+            font-size: 10px;
+        }
+        .legend-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+        .legend-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 10px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .legend-color {
+            width: 40px;
+            height: 24px;
+            border: 2px solid #000;
+            flex-shrink: 0;
+        }
+        .legend-color.user { background: #5B9BD5; }
+        .legend-color.assistant { background: #F5F4F1; }
+        .legend-color.tool { background: #F5C542; }
+        .legend-color.system { background: #7CB56B; }
+        .legend-text {
+            font-size: 14px;
+            color: #2A2825;
+        }
+        .legend-text strong {
+            color: #000;
+        }
+        .callout {
+            background: white;
+            border: 2px solid #000;
+            padding: 16px 20px;
+            margin-top: 20px;
+        }
+        .callout-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #5B9BD5;
+            margin-bottom: 8px;
+        }
+        .callout-content {
+            font-size: 13px;
+            color: #2A2825;
+            line-height: 1.5;
+        }
+        .token-example {
+            display: inline-block;
+            background: #F5F4F1;
+            padding: 2px 6px;
+            border: 1px solid #DDD9D2;
+            font-family: monospace;
+            margin: 0 2px;
+        }
+        .warning-box {
+            background: #E86B5A;
+            color: white;
+            padding: 14px 18px;
+            margin-top: 20px;
+            border: 2px solid #000;
+        }
+        .warning-box p {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .warning-box strong {
+            font-weight: 700;
+        }
+        .space-indicator {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .space-arrow {
+            width: 2px;
+            height: 80px;
+            background: #8A847A;
+            position: relative;
+        }
+        .space-arrow::before,
+        .space-arrow::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            width: 10px;
+            height: 2px;
+            background: #8A847A;
+        }
+        .space-arrow::before { top: 0; }
+        .space-arrow::after { bottom: 0; }
+        .space-text {
+            font-size: 11px;
+            color: #8A847A;
+            writing-mode: vertical-rl;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">The Context Window</h1>
+
+        <div class="content">
+            <div class="jar-section">
+                <div class="jar-container">
+                    <div class="jar">
+                        <div class="capacity-line">
+                            <span class="capacity-label">MAX CAPACITY</span>
+                        </div>
+
+                        <!-- Messages fill from bottom -->
+                        <div class="message-block tool-block large">📄 File contents (2,500 tokens)</div>
+                        <div class="message-block assistant-block">Claude response</div>
+                        <div class="message-block user-block">User question</div>
+                        <div class="message-block tool-block">🔍 Search results (800 tokens)</div>
+                        <div class="message-block assistant-block">Claude response</div>
+                        <div class="message-block user-block">User message</div>
+                        <div class="message-block assistant-block">Claude greeting</div>
+                        <div class="message-block user-block">User: "Hello"</div>
+                        <div class="message-block system-block">System prompt</div>
+                    </div>
+                    <div class="jar-label">
+                        200k tokens
+                        <span class="jar-sublabel">(~150,000 words)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend-section">
+                <div>
+                    <div class="legend-title">What fills the context:</div>
+
+                    <div class="legend-item">
+                        <div class="legend-color system"></div>
+                        <div class="legend-text"><strong>System prompt</strong> — instructions for Claude</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color user"></div>
+                        <div class="legend-text"><strong>User messages</strong> — your inputs</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color assistant"></div>
+                        <div class="legend-text"><strong>Assistant responses</strong> — Claude's replies</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color tool"></div>
+                        <div class="legend-text"><strong>Tool outputs</strong> — search results, file contents, API responses <em>(often huge!)</em></div>
+                    </div>
+                </div>
+
+                <div class="callout">
+                    <div class="callout-title">What's a token?</div>
+                    <div class="callout-content">
+                        A token ≈ ¾ of a word.<br><br>
+                        <span class="token-example">Hello</span> = 1 token<br>
+                        <span class="token-example">Unbelievable</span> = 3 tokens<br>
+                        <span class="token-example">anthropomorphization</span> = 5 tokens
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p><strong>Notice:</strong> Tool outputs (search results, file contents) often take up far more space than your actual messages. A single file read can consume thousands of tokens!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

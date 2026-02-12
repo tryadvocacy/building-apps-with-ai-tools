@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rhythm Beats Helper</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2rem;
+      background: linear-gradient(90deg, #00d4ff, #7c3aed);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 30px;
+      font-size: 0.9rem;
+    }
+
+    /* Controls Section */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    input[type="range"] {
+      width: 100px;
+      accent-color: #7c3aed;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      padding: 8px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background: #2a2a4a;
+      color: #fff;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .btn-play {
+      background: linear-gradient(135deg, #00d4ff, #0099cc);
+      color: #000;
+    }
+
+    .btn-stop {
+      background: linear-gradient(135deg, #ff4757, #c0392b);
+      color: #fff;
+    }
+
+    .btn-metronome {
+      background: linear-gradient(135deg, #ffa502, #e67e22);
+      color: #000;
+    }
+
+    .btn-metronome.active {
+      box-shadow: 0 0 20px rgba(255, 165, 2, 0.5);
+    }
+
+    .btn-add {
+      background: linear-gradient(135deg, #2ed573, #27ae60);
+      color: #000;
+    }
+
+    .btn-clear {
+      background: linear-gradient(135deg, #747d8c, #57606f);
+      color: #fff;
+    }
+
+    /* Beat Labels Header */
+    .beat-header {
+      display: grid;
+      grid-template-columns: 120px repeat(16, 1fr);
+      gap: 2px;
+      margin-bottom: 5px;
+      padding: 0 5px;
+    }
+
+    .beat-label {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .beat-label.downbeat {
+      color: #00d4ff;
+      font-size: 0.9rem;
+    }
+
+    /* Sequencer Grid */
+    .sequencer {
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 15px;
+      overflow-x: auto;
+    }
+
+    .track {
+      display: grid;
+      grid-template-columns: 120px repeat(16, 1fr);
+      gap: 2px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .track-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 10px;
+    }
+
+    .track-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #fff;
+      width: 50px;
+      padding: 4px 6px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid transparent;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .track-name:focus {
+      border-color: #7c3aed;
+      background: rgba(124, 58, 237, 0.2);
+    }
+
+    .track-name::placeholder {
+      color: #666;
+    }
+
+    .track-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      font-size: 0.7rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-record {
+      background: #ff4757;
+      color: #fff;
+    }
+
+    .btn-record.recording {
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 5px #ff4757; }
+      to { box-shadow: 0 0 20px #ff4757; }
+    }
+
+    .btn-preview {
+      background: #5352ed;
+      color: #fff;
+    }
+
+    .btn-delete {
+      background: #57606f;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+
+    /* Grid Cells */
+    .cell {
+      aspect-ratio: 1;
+      min-width: 35px;
+      max-width: 50px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 2px solid transparent;
+    }
+
+    .cell:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .cell.active {
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+    }
+
+    .cell.playing {
+      border-color: #00d4ff;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+    }
+
+    /* Downbeat markers */
+    .cell:nth-child(2),
+    .cell:nth-child(6),
+    .cell:nth-child(10),
+    .cell:nth-child(14) {
+      border-left: 2px solid rgba(0, 212, 255, 0.3);
+    }
+
+    /* Playhead indicator */
+    .playhead {
+      position: absolute;
+      width: 3px;
+      background: #00d4ff;
+      border-radius: 2px;
+      pointer-events: none;
+      transition: left 0.05s linear;
+    }
+
+    /* Recording Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1a1a2e;
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 400px;
+      border: 1px solid #333;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    .modal-content p {
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .recording-indicator {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #ff4757;
+      margin: 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    .waveform {
+      height: 60px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .waveform-bar {
+      width: 4px;
+      background: #7c3aed;
+      border-radius: 2px;
+      transition: height 0.1s;
+    }
+
+    /* Instructions */
+    .instructions {
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .instructions h3 {
+      color: #7c3aed;
+      margin-bottom: 10px;
+    }
+
+    .instructions ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .instructions li {
+      margin-bottom: 5px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .instructions li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #7c3aed;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      .cell {
+        min-width: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Rhythm Beats Helper</h1>
+    <p class="subtitle">Record sounds, create beats, find your groove</p>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-group">
+        <label>BPM:</label>
+        <input type="number" id="bpm" value="120" min="40" max="240">
+        <input type="range" id="bpmSlider" value="120" min="40" max="240">
+      </div>
+
+      <button class="btn-play" id="playBtn">▶ Play</button>
+      <button class="btn-stop" id="stopBtn">■ Stop</button>
+      <button class="btn-metronome" id="metronomeBtn">🎵 Metronome</button>
+      <button class="btn-add" id="addTrackBtn">+ Add Sound</button>
+      <button class="btn-clear" id="clearBtn">Clear All</button>
+    </div>
+
+    <!-- Beat Labels -->
+    <div class="beat-header">
+      <div></div>
+      <div class="beat-label downbeat">1</div>
+      <div class="beat-label">e</div>
+      <div class="beat-label">+</div>
+      <div class="beat-label">a</div>
+      <div class="beat-label downbeat">2</div>
+      <div class="beat-label">e</div>
+      <div class="beat-label">+</div>
+      <div class="beat-label">a</div>
+      <div class="beat-label downbeat">3</div>
+      <div class="beat-label">e</div>
+      <div class="beat-label">+</div>
+      <div class="beat-label">a</div>
+      <div class="beat-label downbeat">4</div>
+      <div class="beat-label">e</div>
+      <div class="beat-label">+</div>
+      <div class="beat-label">a</div>
+    </div>
+
+    <!-- Sequencer Grid -->
+    <div class="sequencer" id="sequencer">
+      <!-- Tracks will be added here dynamically -->
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+      <h3>How to Use</h3>
+      <ul>
+        <li>Click cells in the grid to toggle beats on/off (default click sound included)</li>
+        <li>Click the <strong>red ●</strong> to record your own sound (clap, snap, voice)</li>
+        <li>Click the <strong>name</strong> to rename each track</li>
+        <li>Click <strong>"+ Add Sound"</strong> to add more tracks</li>
+        <li>Use <strong>Metronome</strong> to find your tempo, then <strong>Play</strong>!</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Recording Modal -->
+  <div class="modal" id="recordModal">
+    <div class="modal-content">
+      <h2>Recording...</h2>
+      <div class="recording-indicator">🎤</div>
+      <div class="waveform" id="waveform">
+        <!-- Waveform bars will be added dynamically -->
+      </div>
+      <p>Make your sound! Recording will stop automatically.</p>
+      <button class="btn-stop" id="stopRecordingBtn">Stop Recording</button>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    // AUDIO CONTEXT & STATE
+    // ═══════════════════════════════════════════════════════════════
+    let audioContext = null;
+    let isPlaying = false;
+    let isMetronomeOn = false;
+    let currentStep = 0;
+    let playInterval = null;
+    let metronomeInterval = null;
+    let tracks = [];
+    let recordingTrackIndex = null;
+
+    // Initialize audio context on user interaction
+    function initAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioContext;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // DEFAULT SOUND GENERATION
+    // ═══════════════════════════════════════════════════════════════
+    let defaultSoundBuffer = null;
+
+    function createDefaultSound() {
+      initAudio();
+      // Create a short click/tick sound programmatically
+      const sampleRate = audioContext.sampleRate;
+      const duration = 0.05; // 50ms click
+      const buffer = audioContext.createBuffer(1, sampleRate * duration, sampleRate);
+      const data = buffer.getChannelData(0);
+
+      for (let i = 0; i < data.length; i++) {
+        // Exponential decay click sound
+        const t = i / sampleRate;
+        const envelope = Math.exp(-t * 80);
+        data[i] = envelope * (Math.random() * 2 - 1) * 0.5;
+      }
+
+      defaultSoundBuffer = buffer;
+      return buffer;
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // TRACK MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════
+    let trackCounter = 0;
+
+    function createTrack(name = '') {
+      initAudio();
+      if (!defaultSoundBuffer) {
+        createDefaultSound();
+      }
+
+      trackCounter++;
+      const track = {
+        id: Date.now(),
+        name: name || `Sound ${trackCounter}`,
+        steps: new Array(16).fill(false),
+        audioBuffer: defaultSoundBuffer // Pre-load with default click
+      };
+      tracks.push(track);
+      renderTracks();
+      return track;
+    }
+
+    function updateTrackName(trackId, newName) {
+      const track = tracks.find(t => t.id === trackId);
+      if (track) {
+        track.name = newName || `Sound ${tracks.indexOf(track) + 1}`;
+      }
+    }
+
+    function deleteTrack(trackId) {
+      tracks = tracks.filter(t => t.id !== trackId);
+      renderTracks();
+    }
+
+    function toggleStep(trackId, stepIndex) {
+      const track = tracks.find(t => t.id === trackId);
+      if (track) {
+        track.steps[stepIndex] = !track.steps[stepIndex];
+        renderTracks();
+      }
+    }
+
+    function clearAllTracks() {
+      tracks.forEach(track => {
+        track.steps = new Array(16).fill(false);
+      });
+      renderTracks();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RECORDING
+    // ═══════════════════════════════════════════════════════════════
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let analyser = null;
+
+    async function startRecording(trackIndex) {
+      initAudio();
+      recordingTrackIndex = trackIndex;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Setup analyser for waveform visualization
+        const source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        source.connect(analyser);
+
+        // Setup recorder
+        mediaRecorder = new MediaRecorder(stream);
+        recordedChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            recordedChunks.push(e.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(track => track.stop());
+          const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+          const arrayBuffer = await audioBlob.arrayBuffer();
+
+          try {
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            if (recordingTrackIndex !== null && tracks[recordingTrackIndex]) {
+              tracks[recordingTrackIndex].audioBuffer = audioBuffer;
+            }
+          } catch (err) {
+            console.error('Error decoding audio:', err);
+          }
+
+          hideRecordingModal();
+        };
+
+        mediaRecorder.start();
+        showRecordingModal();
+        startWaveformAnimation();
+
+        // Auto-stop after 2 seconds
+        setTimeout(() => {
+          if (mediaRecorder && mediaRecorder.state === 'recording') {
+            stopRecording();
+          }
+        }, 2000);
+
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+        alert('Could not access microphone. Please allow microphone access.');
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+    }
+
+    function showRecordingModal() {
+      document.getElementById('recordModal').classList.add('show');
+    }
+
+    function hideRecordingModal() {
+      document.getElementById('recordModal').classList.remove('show');
+      recordingTrackIndex = null;
+    }
+
+    function startWaveformAnimation() {
+      const waveform = document.getElementById('waveform');
+      waveform.innerHTML = '';
+
+      // Create bars
+      for (let i = 0; i < 20; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.height = '10px';
+        waveform.appendChild(bar);
+      }
+
+      const bars = waveform.querySelectorAll('.waveform-bar');
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      function animate() {
+        if (!document.getElementById('recordModal').classList.contains('show')) return;
+
+        analyser.getByteFrequencyData(dataArray);
+
+        bars.forEach((bar, i) => {
+          const value = dataArray[i * 6] || 0;
+          const height = Math.max(5, (value / 255) * 50);
+          bar.style.height = height + 'px';
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // PLAYBACK
+    // ═══════════════════════════════════════════════════════════════
+    function playSound(audioBuffer) {
+      if (!audioBuffer || !audioContext) return;
+
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      source.start();
+    }
+
+    function playMetronomeClick(isDownbeat = false) {
+      if (!audioContext) return;
+
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = isDownbeat ? 1000 : 800;
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.1);
+    }
+
+    function startPlayback() {
+      initAudio();
+      isPlaying = true;
+      currentStep = 0;
+
+      const bpm = parseInt(document.getElementById('bpm').value);
+      const stepDuration = (60 / bpm) / 4 * 1000; // 16th note duration in ms
+
+      playInterval = setInterval(() => {
+        // Highlight current step
+        highlightStep(currentStep);
+
+        // Play sounds for active steps
+        tracks.forEach(track => {
+          if (track.steps[currentStep] && track.audioBuffer) {
+            playSound(track.audioBuffer);
+          }
+        });
+
+        currentStep = (currentStep + 1) % 16;
+      }, stepDuration);
+
+      document.getElementById('playBtn').textContent = '▶ Playing';
+    }
+
+    function stopPlayback() {
+      isPlaying = false;
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+      }
+      currentStep = 0;
+      clearHighlight();
+      document.getElementById('playBtn').textContent = '▶ Play';
+    }
+
+    function toggleMetronome() {
+      initAudio();
+      isMetronomeOn = !isMetronomeOn;
+
+      const btn = document.getElementById('metronomeBtn');
+
+      if (isMetronomeOn) {
+        btn.classList.add('active');
+        const bpm = parseInt(document.getElementById('bpm').value);
+        const beatDuration = (60 / bpm) * 1000;
+        let beatCount = 0;
+
+        metronomeInterval = setInterval(() => {
+          playMetronomeClick(beatCount % 4 === 0);
+          beatCount++;
+        }, beatDuration);
+      } else {
+        btn.classList.remove('active');
+        if (metronomeInterval) {
+          clearInterval(metronomeInterval);
+          metronomeInterval = null;
+        }
+      }
+    }
+
+    function highlightStep(step) {
+      document.querySelectorAll('.cell').forEach((cell, index) => {
+        const cellStep = index % 16;
+        cell.classList.toggle('playing', cellStep === step);
+      });
+    }
+
+    function clearHighlight() {
+      document.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.remove('playing');
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RENDERING
+    // ═══════════════════════════════════════════════════════════════
+    function renderTracks() {
+      const sequencer = document.getElementById('sequencer');
+      sequencer.innerHTML = '';
+
+      tracks.forEach((track, trackIndex) => {
+        const trackEl = document.createElement('div');
+        trackEl.className = 'track';
+
+        // Track controls
+        const controls = document.createElement('div');
+        controls.className = 'track-controls';
+
+        const name = document.createElement('input');
+        name.type = 'text';
+        name.className = 'track-name';
+        name.value = track.name;
+        name.placeholder = 'Name';
+        name.onchange = (e) => updateTrackName(track.id, e.target.value);
+        name.onkeydown = (e) => {
+          if (e.key === 'Enter') e.target.blur();
+        };
+
+        const recordBtn = document.createElement('button');
+        recordBtn.className = 'track-btn btn-record';
+        recordBtn.textContent = '●';
+        recordBtn.title = 'Record sound';
+        recordBtn.onclick = () => startRecording(trackIndex);
+
+        const previewBtn = document.createElement('button');
+        previewBtn.className = 'track-btn btn-preview';
+        previewBtn.textContent = '▶';
+        previewBtn.title = 'Preview sound';
+        previewBtn.onclick = () => {
+          initAudio();
+          if (track.audioBuffer) playSound(track.audioBuffer);
+        };
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'track-btn btn-delete';
+        deleteBtn.textContent = '×';
+        deleteBtn.title = 'Delete track';
+        deleteBtn.onclick = () => deleteTrack(track.id);
+
+        controls.appendChild(name);
+        controls.appendChild(recordBtn);
+        controls.appendChild(previewBtn);
+        controls.appendChild(deleteBtn);
+        trackEl.appendChild(controls);
+
+        // Steps
+        for (let i = 0; i < 16; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell' + (track.steps[i] ? ' active' : '');
+          cell.onclick = () => toggleStep(track.id, i);
+          trackEl.appendChild(cell);
+        }
+
+        sequencer.appendChild(trackEl);
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // EVENT LISTENERS
+    // ═══════════════════════════════════════════════════════════════
+    document.getElementById('playBtn').onclick = () => {
+      if (isPlaying) {
+        stopPlayback();
+      } else {
+        startPlayback();
+      }
+    };
+
+    document.getElementById('stopBtn').onclick = stopPlayback;
+    document.getElementById('metronomeBtn').onclick = toggleMetronome;
+    document.getElementById('addTrackBtn').onclick = createTrack;
+    document.getElementById('clearBtn').onclick = clearAllTracks;
+    document.getElementById('stopRecordingBtn').onclick = stopRecording;
+
+    // BPM sync
+    const bpmInput = document.getElementById('bpm');
+    const bpmSlider = document.getElementById('bpmSlider');
+
+    bpmInput.oninput = () => {
+      bpmSlider.value = bpmInput.value;
+      if (isPlaying) {
+        stopPlayback();
+        startPlayback();
+      }
+      if (isMetronomeOn) {
+        toggleMetronome();
+        toggleMetronome();
+      }
+    };
+
+    bpmSlider.oninput = () => {
+      bpmInput.value = bpmSlider.value;
+      if (isPlaying) {
+        stopPlayback();
+        startPlayback();
+      }
+      if (isMetronomeOn) {
+        toggleMetronome();
+        toggleMetronome();
+      }
+    };
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !e.target.matches('input')) {
+        e.preventDefault();
+        if (isPlaying) {
+          stopPlayback();
+        } else {
+          startPlayback();
+        }
+      }
+    });
+
+    // Initialize with a single track
+    createTrack();
+  </script>
+</body>
+</html>

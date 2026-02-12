@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 4: Build</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #F5F3EB;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            width: 1200px;
+            height: 675px;
+            background: #F5F3EB;
+            position: relative;
+            padding: 30px 50px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .phase-badge {
+            background: #E86B5A;
+            color: white;
+            padding: 8px 16px;
+            border: 2px solid #000;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000;
+        }
+        .title-icon {
+            font-size: 32px;
+            margin-left: 12px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #5C5750;
+            margin-top: 8px;
+            margin-left: 120px;
+        }
+        .content {
+            display: flex;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        .main-content {
+            flex: 1;
+        }
+        .workflow-block {
+            background: white;
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .workflow-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .workflow-title .icon {
+            width: 28px;
+            height: 28px;
+            background: #E86B5A;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .wf-step {
+            background: #F5F4F1;
+            border: 1px solid #DDD9D2;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #2A2825;
+        }
+        .wf-step.ai {
+            background: #E86B5A;
+            border-color: #000;
+            color: white;
+        }
+        .wf-arrow {
+            color: #8A847A;
+            font-size: 16px;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .tool-card {
+            background: white;
+            border: 2px solid #000;
+            padding: 14px;
+        }
+        .tool-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 6px;
+        }
+        .tool-desc {
+            font-size: 11px;
+            color: #5C5750;
+            line-height: 1.4;
+        }
+        .tool-tag {
+            display: inline-block;
+            background: #F5C542;
+            padding: 2px 6px;
+            font-size: 9px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .side-panel {
+            width: 340px;
+        }
+        .loop-diagram {
+            background: white;
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .loop-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #5C5750;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+        .loop-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .loop-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+        .loop-box {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 2px solid #000;
+        }
+        .loop-box.you { background: #5B9BD5; color: white; }
+        .loop-box.ai { background: #E86B5A; color: white; }
+        .loop-box.test { background: #7CB56B; color: white; }
+        .loop-arrow-down {
+            font-size: 20px;
+            color: #8A847A;
+        }
+        .loop-feedback {
+            width: 100%;
+            border: 2px dashed #8A847A;
+            padding: 8px;
+            font-size: 11px;
+            color: #8A847A;
+            margin-top: 8px;
+        }
+        .tip-box {
+            background: #E86B5A;
+            border: 2px solid #000;
+            padding: 16px;
+            color: white;
+        }
+        .tip-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .tip-content {
+            font-size: 12px;
+            line-height: 1.5;
+            opacity: 0.95;
+        }
+        .nav-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 50px;
+            font-size: 12px;
+            color: #8A847A;
+        }
+        .nav-hint span {
+            color: #5C5750;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="phase-badge">PHASE 4</div>
+            <div>
+                <h1 class="title">Build<span class="title-icon">⚒</span></h1>
+            </div>
+        </div>
+        <p class="subtitle">Now you code — with AI doing the heavy lifting. Iterate rapidly in small chunks.</p>
+
+        <div class="content">
+            <div class="main-content">
+                <div class="workflow-block">
+                    <div class="workflow-title">
+                        <span class="icon">⟳</span>
+                        The Build Loop
+                    </div>
+                    <div class="workflow-steps">
+                        <span class="wf-step">Describe what you want</span>
+                        <span class="wf-arrow">→</span>
+                        <span class="wf-step ai">AI generates code</span>
+                        <span class="wf-arrow">→</span>
+                        <span class="wf-step">Review & test</span>
+                        <span class="wf-arrow">→</span>
+                        <span class="wf-step">Request changes</span>
+                        <span class="wf-arrow">↺</span>
+                    </div>
+                </div>
+
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-name">Cursor</div>
+                        <div class="tool-desc">AI-native code editor. Cmd+K to edit, Composer for multi-file changes. Use with GPT-4.5 or Claude.</div>
+                        <span class="tool-tag">EDITOR</span>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">Claude Code</div>
+                        <div class="tool-desc">CLI agent that reads your codebase and makes changes. Great for refactoring and complex tasks.</div>
+                        <span class="tool-tag">CLI</span>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">v0 / bolt.new</div>
+                        <div class="tool-desc">Generate full UI components from descriptions. Good for prototyping frontends fast.</div>
+                        <span class="tool-tag">UI GEN</span>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">Replit Agent</div>
+                        <div class="tool-desc">Full-stack agent that deploys for you. Good for quick MVPs and prototypes.</div>
+                        <span class="tool-tag">FULL STACK</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 16px; display: flex; gap: 12px;">
+                    <div style="flex: 1; background: #F5F4F1; border: 2px solid #DDD9D2; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #8A847A; margin-bottom: 6px;">TIP: Small Chunks</div>
+                        <div style="font-size: 11px; color: #5C5750;">Ask for one feature at a time. Test before moving on. Don't let changes pile up.</div>
+                    </div>
+                    <div style="flex: 1; background: #F5F4F1; border: 2px solid #DDD9D2; padding: 12px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #8A847A; margin-bottom: 6px;">TIP: Use Live Server</div>
+                        <div style="font-size: 11px; color: #5C5750;">Auto-refresh on save. See changes instantly. Cursor + Live Server = fast feedback.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="loop-diagram">
+                    <div class="loop-title">Your Role vs AI's Role</div>
+                    <div class="loop-visual">
+                        <div class="loop-item">
+                            <div class="loop-box you">You: Describe intent</div>
+                        </div>
+                        <span class="loop-arrow-down">↓</span>
+                        <div class="loop-item">
+                            <div class="loop-box ai">AI: Write code</div>
+                        </div>
+                        <span class="loop-arrow-down">↓</span>
+                        <div class="loop-item">
+                            <div class="loop-box test">You: Test & review</div>
+                        </div>
+                        <div class="loop-feedback">↺ Iterate until it works</div>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <div class="tip-title">⚠️ Common Mistake</div>
+                    <div class="tip-content">
+                        Don't accept code you don't understand. Read what the AI wrote. Ask it to explain.
+                        You're still responsible for the final product.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-hint">Next: <span>Use & Improve →</span></div>
+    </div>
+</body>
+</html>

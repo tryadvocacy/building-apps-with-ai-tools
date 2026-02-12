@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pancake Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700;9..144,900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --butter: #F5C563;
+    --maple: #C4722A;
+    --maple-dark: #8B4E1A;
+    --batter: #F2E8D5;
+    --griddle: #3D3229;
+    --griddle-deep: #2A221B;
+    --cream: #FFF8EE;
+    --blueberry: #5B4A8A;
+    --steam: rgba(255, 255, 255, 0.6);
+    --golden: #D4A030;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--griddle);
+    overflow-x: hidden;
+  }
+
+  /* ─── Hero ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(245, 197, 99, 0.25) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(196, 114, 42, 0.15) 0%, transparent 50%),
+      var(--cream);
+    position: relative;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a030' fill-opacity='0.06'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--maple);
+    color: var(--cream);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 0.8s ease-out;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+    color: var(--griddle-deep);
+    margin-bottom: 1rem;
+    animation: fadeDown 0.8s ease-out 0.1s both;
+  }
+
+  h1 .accent { color: var(--maple); }
+
+  .subtitle {
+    font-size: 1.15rem;
+    color: var(--maple-dark);
+    max-width: 420px;
+    line-height: 1.6;
+    animation: fadeDown 0.8s ease-out 0.2s both;
+  }
+
+  .hero-illustration {
+    margin-top: 2.5rem;
+    animation: fadeDown 0.9s ease-out 0.3s both;
+    filter: drop-shadow(0 20px 40px rgba(139, 78, 26, 0.2));
+  }
+
+  .hero-illustration svg {
+    width: clamp(260px, 40vw, 400px);
+    height: auto;
+  }
+
+  .pancake-steam {
+    animation: steamFloat 3s ease-in-out infinite;
+    transform-origin: center bottom;
+  }
+  .pancake-steam:nth-child(2) { animation-delay: 0.8s; }
+  .pancake-steam:nth-child(3) { animation-delay: 1.6s; }
+
+  .syrup-drip {
+    animation: dripDown 4s ease-in-out infinite;
+  }
+
+  .butter-pat {
+    animation: butterMelt 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes steamFloat {
+    0%, 100% { opacity: 0; transform: translateY(0) scaleX(1); }
+    30% { opacity: 0.5; }
+    60% { opacity: 0.3; transform: translateY(-18px) scaleX(1.3); }
+    100% { opacity: 0; transform: translateY(-35px) scaleX(0.6); }
+  }
+
+  @keyframes dripDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+
+  @keyframes butterMelt {
+    0% { transform: scaleX(1) scaleY(1); }
+    100% { transform: scaleX(1.06) scaleY(0.92); }
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    animation: bounce 2s infinite, fadeDown 0.8s ease-out 0.5s both;
+    font-size: 1.5rem;
+    opacity: 0.5;
+  }
+
+  /* ─── Sections ─── */
+  section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--maple);
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 2.2rem;
+    color: var(--griddle-deep);
+    margin-bottom: 2rem;
+  }
+
+  /* ─── Ingredients ─── */
+  .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .ingredient-card {
+    background: white;
+    border: 1.5px solid rgba(196, 114, 42, 0.15);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .ingredient-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(196, 114, 42, 0.12);
+  }
+
+  .ingredient-icon {
+    font-size: 1.8rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--batter);
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .ingredient-info strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--griddle-deep);
+  }
+
+  .ingredient-info span {
+    font-size: 0.8rem;
+    color: var(--maple);
+  }
+
+  /* ─── Steps ─── */
+  .steps {
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .step {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    counter-increment: step;
+  }
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+    background: var(--griddle-deep);
+    color: var(--butter);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    padding-top: 0.6rem;
+  }
+
+  .step-content h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+    color: var(--griddle-deep);
+  }
+
+  .step-content p {
+    color: #6B5D52;
+    line-height: 1.65;
+    font-size: 0.95rem;
+  }
+
+  .tip {
+    background: linear-gradient(135deg, rgba(245, 197, 99, 0.15), rgba(196, 114, 42, 0.1));
+    border-left: 3px solid var(--butter);
+    border-radius: 0 12px 12px 0;
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--maple-dark);
+    line-height: 1.5;
+  }
+
+  /* ─── Interactive Pancake Game ─── */
+  .game-section {
+    background: var(--griddle-deep);
+    padding: 4rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(245, 197, 99, 0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .game-section .section-label { color: var(--butter); }
+  .game-section h2 { color: var(--cream); }
+  .game-section p { color: rgba(255, 248, 238, 0.7); }
+
+  .game-container {
+    max-width: 500px;
+    margin: 2rem auto 0;
+    position: relative;
+  }
+
+  canvas#pancakeCanvas {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    border-radius: 20px;
+    background: #4A3C31;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  .game-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-weight: 900;
+    font-size: 2rem;
+    color: var(--butter);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 248, 238, 0.5);
+    margin-top: 0.2rem;
+  }
+
+  .game-instructions {
+    color: rgba(255, 248, 238, 0.5);
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .game-instructions em {
+    color: var(--butter);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  .reset-btn {
+    margin-top: 1.25rem;
+    background: transparent;
+    border: 1.5px solid rgba(245, 197, 99, 0.3);
+    color: var(--butter);
+    padding: 0.5rem 1.5rem;
+    border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    background: rgba(245, 197, 99, 0.1);
+    border-color: var(--butter);
+  }
+
+  /* ─── Footer ─── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    font-size: 0.8rem;
+    color: var(--maple);
+    opacity: 0.6;
+  }
+
+  /* ─── Animations ─── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  @media (max-width: 600px) {
+    .ingredients-grid { grid-template-columns: 1fr; }
+    .step { gap: 1rem; }
+    canvas#pancakeCanvas { height: 320px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <span class="badge">☀ Weekend Breakfast Guide</span>
+  <h1>The <span class="accent">Pancake</span> Lab</h1>
+  <p class="subtitle">Master the art of fluffy, golden pancakes — then test your flipping skills in our griddle simulator.</p>
+
+  <div class="hero-illustration">
+    <svg viewBox="0 0 400 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Plate gradient -->
+        <radialGradient id="plateGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#F5F0E8"/>
+          <stop offset="70%" stop-color="#E8DFD2"/>
+          <stop offset="100%" stop-color="#D9CEBD"/>
+        </radialGradient>
+        <!-- Pancake gradients -->
+        <linearGradient id="pancake1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#E8B84D"/>
+          <stop offset="100%" stop-color="#C4892A"/>
+        </linearGradient>
+        <linearGradient id="pancake2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#DEAA42"/>
+          <stop offset="100%" stop-color="#BA7F22"/>
+        </linearGradient>
+        <linearGradient id="pancake3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#D4A030"/>
+          <stop offset="100%" stop-color="#B07520"/>
+        </linearGradient>
+        <linearGradient id="syrupGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#9B5B1A"/>
+          <stop offset="100%" stop-color="#7A440F"/>
+        </linearGradient>
+        <linearGradient id="butterGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#FFEEB0"/>
+          <stop offset="100%" stop-color="#F5D56A"/>
+        </linearGradient>
+        <!-- Soft shadow -->
+        <filter id="softShadow" x="-10%" y="-10%" width="130%" height="140%">
+          <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#7A440F" flood-opacity="0.18"/>
+        </filter>
+        <filter id="plateShadow" x="-10%" y="-10%" width="130%" height="140%">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#5A3A14" flood-opacity="0.22"/>
+        </filter>
+      </defs>
+
+      <!-- Steam wisps -->
+      <g class="pancake-steam" opacity="0.35">
+        <path d="M170 100 Q165 80 175 60 Q180 45 170 30" stroke="#C4892A" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+      </g>
+      <g class="pancake-steam" opacity="0.3">
+        <path d="M200 95 Q195 72 205 52 Q210 35 200 20" stroke="#C4892A" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+      </g>
+      <g class="pancake-steam" opacity="0.25">
+        <path d="M230 100 Q235 78 225 58 Q220 42 230 28" stroke="#C4892A" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.45"/>
+      </g>
+
+      <!-- Plate -->
+      <g filter="url(#plateShadow)">
+        <ellipse cx="200" cy="290" rx="155" ry="42" fill="url(#plateGrad)"/>
+        <ellipse cx="200" cy="285" rx="140" ry="36" fill="none" stroke="#C8BBAA" stroke-width="1.2" opacity="0.5"/>
+        <ellipse cx="200" cy="287" rx="120" ry="30" fill="none" stroke="#D5C9B8" stroke-width="0.8" opacity="0.3"/>
+      </g>
+
+      <!-- Plate rim highlight -->
+      <ellipse cx="200" cy="282" rx="148" ry="38" fill="none" stroke="white" stroke-width="1" opacity="0.25"/>
+
+      <!-- Pancake stack -->
+      <g filter="url(#softShadow)">
+        <!-- Bottom pancake (3rd) -->
+        <ellipse cx="200" cy="266" rx="95" ry="26" fill="url(#pancake3)"/>
+        <ellipse cx="200" cy="264" rx="90" ry="24" fill="none" stroke="#C49530" stroke-width="0.5" opacity="0.3"/>
+        <!-- Pancake edge detail -->
+        <ellipse cx="200" cy="260" rx="94" ry="13" fill="url(#pancake3)" opacity="0.3"/>
+
+        <!-- Middle pancake (2nd) -->
+        <ellipse cx="200" cy="240" rx="90" ry="24" fill="url(#pancake2)"/>
+        <ellipse cx="200" cy="238" rx="85" ry="22" fill="none" stroke="#CCA040" stroke-width="0.5" opacity="0.3"/>
+        <ellipse cx="200" cy="234" rx="89" ry="12" fill="url(#pancake2)" opacity="0.3"/>
+
+        <!-- Top pancake (1st) -->
+        <ellipse cx="200" cy="214" rx="86" ry="23" fill="url(#pancake1)"/>
+        <ellipse cx="200" cy="212" rx="82" ry="21" fill="none" stroke="#D4AA50" stroke-width="0.5" opacity="0.25"/>
+        <!-- Top surface -->
+        <ellipse cx="200" cy="207" rx="84" ry="20" fill="#E8B84D"/>
+        <!-- Top surface highlights -->
+        <ellipse cx="185" cy="202" rx="35" ry="10" fill="white" opacity="0.08"/>
+      </g>
+
+      <!-- Syrup drizzle -->
+      <g class="syrup-drip">
+        <!-- Syrup pool on top -->
+        <ellipse cx="200" cy="204" rx="42" ry="11" fill="#9B5B1A" opacity="0.75"/>
+        <ellipse cx="198" cy="202" rx="30" ry="8" fill="#AA6820" opacity="0.5"/>
+        <!-- Syrup highlight -->
+        <ellipse cx="192" cy="200" rx="12" ry="4" fill="white" opacity="0.1"/>
+
+        <!-- Drip down left side -->
+        <path d="M162 207 Q158 225 160 248 Q161 258 164 262" stroke="url(#syrupGrad)" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.85"/>
+        <circle cx="164" cy="265" r="5" fill="#8B4E1A" opacity="0.8"/>
+
+        <!-- Drip down right side -->
+        <path d="M248 210 Q252 222 250 234" stroke="url(#syrupGrad)" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <circle cx="250" cy="236" r="4" fill="#8B4E1A" opacity="0.7"/>
+
+        <!-- Small front drip -->
+        <path d="M210 218 Q214 228 212 240 Q211 248 213 252" stroke="url(#syrupGrad)" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="213" cy="254" r="3.5" fill="#8B4E1A" opacity="0.7"/>
+      </g>
+
+      <!-- Butter pat -->
+      <g class="butter-pat">
+        <rect x="186" y="190" rx="3" ry="3" width="28" height="12" fill="url(#butterGrad)" transform="rotate(-5 200 196)"/>
+        <rect x="188" y="192" rx="2" ry="2" width="24" height="3" fill="white" opacity="0.25" transform="rotate(-5 200 196)"/>
+      </g>
+
+      <!-- Scattered blueberries on plate -->
+      <circle cx="125" cy="282" r="7" fill="#5B4A8A"/>
+      <circle cx="125" cy="282" r="7" fill="url(#plateGrad)" opacity="0.1"/>
+      <ellipse cx="124" cy="280" rx="3" ry="2" fill="white" opacity="0.15"/>
+
+      <circle cx="140" cy="290" r="5.5" fill="#4E3F78"/>
+      <ellipse cx="139" cy="288.5" rx="2.2" ry="1.5" fill="white" opacity="0.12"/>
+
+      <circle cx="270" cy="285" r="6.5" fill="#5B4A8A"/>
+      <ellipse cx="269" cy="283" rx="2.5" ry="1.8" fill="white" opacity="0.14"/>
+
+      <circle cx="255" cy="275" r="5" fill="#4E3F78"/>
+      <ellipse cx="254" cy="273.5" rx="2" ry="1.4" fill="white" opacity="0.12"/>
+
+      <!-- One blueberry on top pancake -->
+      <circle cx="232" cy="200" r="6" fill="#5B4A8A"/>
+      <ellipse cx="231" cy="198" rx="2.5" ry="1.8" fill="white" opacity="0.18"/>
+    </svg>
+  </div>
+
+  <div class="scroll-hint">↓</div>
+</div>
+
+<!-- Ingredients -->
+<section>
+  <p class="section-label">What You'll Need</p>
+  <h2>Ingredients</h2>
+  <div class="ingredients-grid">
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🌾</div>
+      <div class="ingredient-info"><strong>All-Purpose Flour</strong><span>1 ½ cups (190g)</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🥛</div>
+      <div class="ingredient-info"><strong>Buttermilk</strong><span>1 ¼ cups (300ml)</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🥚</div>
+      <div class="ingredient-info"><strong>Large Egg</strong><span>1 whole</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🧈</div>
+      <div class="ingredient-info"><strong>Melted Butter</strong><span>3 tablespoons</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">✨</div>
+      <div class="ingredient-info"><strong>Baking Powder</strong><span>1 ½ teaspoons</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🫧</div>
+      <div class="ingredient-info"><strong>Baking Soda</strong><span>½ teaspoon</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🍬</div>
+      <div class="ingredient-info"><strong>Sugar</strong><span>2 tablespoons</span></div>
+    </div>
+    <div class="ingredient-card">
+      <div class="ingredient-icon">🧂</div>
+      <div class="ingredient-info"><strong>Salt</strong><span>½ teaspoon</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Steps -->
+<section>
+  <p class="section-label">Step by Step</p>
+  <h2>How to Cook Them</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Mix the dry ingredients</h3>
+        <p>Whisk together the flour, sugar, baking powder, baking soda, and salt in a large bowl. Make a well in the center.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Combine the wet ingredients</h3>
+        <p>In a separate bowl, whisk the buttermilk, melted butter, and egg until smooth. Pour the wet mix into the well of the dry ingredients.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Stir gently — don't overmix</h3>
+        <p>Fold everything together with a spatula until just combined. The batter should be lumpy — that's the secret to fluffy pancakes. Overmixing develops gluten and makes them tough.</p>
+        <div class="tip">💡 Let the batter rest for 5 minutes. The baking soda reacts with the buttermilk and creates extra bubbles.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Heat the griddle</h3>
+        <p>Set a non-stick pan or griddle to medium heat. Add a thin layer of butter. To test if it's ready, sprinkle a few drops of water — they should sizzle and evaporate in a couple of seconds.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h3>Pour and wait for bubbles</h3>
+        <p>Pour about ¼ cup of batter per pancake. Cook until bubbles form on the surface and the edges look set — roughly 2–3 minutes.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">6</div>
+      <div class="step-content">
+        <h3>Flip and finish</h3>
+        <p>Flip confidently in one smooth motion. Cook for another 1–2 minutes until the underside is golden brown. Serve immediately with butter and maple syrup.</p>
+        <div class="tip">🍁 Stack 'em up, add a pat of butter on top, and let the maple syrup cascade down the sides. Perfection.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive Game -->
+<div class="game-section">
+  <p class="section-label">Time to Practice</p>
+  <h2>The Pancake Flip Game</h2>
+  <p>Cook your pancake to golden perfection, then flip it at the right moment!</p>
+
+  <div class="game-container">
+    <canvas id="pancakeCanvas"></canvas>
+    <div class="game-stats">
+      <div class="stat">
+        <div class="stat-value" id="scoreDisplay">0</div>
+        <div class="stat-label">Perfect Flips</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="streakDisplay">0</div>
+        <div class="stat-label">Best Streak</div>
+      </div>
+    </div>
+    <p class="game-instructions">
+      Watch the pancake cook. When bubbles appear, <em>click or tap to flip!</em><br>
+      Too early = raw. Too late = burnt. Time it right for golden perfection.
+    </p>
+    <button class="reset-btn" onclick="resetGame()">Reset Score</button>
+  </div>
+</div>
+
+<footer>Made with 🧈 and ☕ — The Pancake Lab</footer>
+
+<script>
+const canvas = document.getElementById('pancakeCanvas');
+const ctx = canvas.getContext('2d');
+
+// Hi-DPI setup
+function setupCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  return { w: rect.width, h: rect.height };
+}
+
+let { w: W, h: H } = setupCanvas();
+window.addEventListener('resize', () => {
+  ({ w: W, h: H } = setupCanvas());
+});
+
+// Game state
+let state = 'cooking'; // cooking | flipping | result | resetting
+let cookProgress = 0;    // 0 to 1
+let cookSpeed = 0.003;
+let bubbles = [];
+let score = 0;
+let streak = 0;
+let bestStreak = 0;
+let flipAngle = 0;
+let flipY = 0;
+let resultText = '';
+let resultColor = '';
+let resultTimer = 0;
+let particles = [];
+let steamParticles = [];
+
+function getPancakeColor(progress, isBottom) {
+  if (isBottom) {
+    // Bottom always shows as cooked (golden)
+    return '#D4A030';
+  }
+  if (progress < 0.25) return '#F2E2C4'; // raw batter
+  if (progress < 0.45) return '#E8CFA0'; // starting to cook
+  if (progress < 0.6) return '#D4A030';  // golden!
+  if (progress < 0.8) return '#B07A1A';  // dark golden
+  return '#6B3A0A'; // burnt
+}
+
+function getRating(progress) {
+  if (progress < 0.25) return { text: 'RAW! 🥴', color: '#E8CFA0', success: false };
+  if (progress < 0.4) return { text: 'Undercooked 😬', color: '#D4A030', success: false };
+  if (progress < 0.65) return { text: 'PERFECT! 🥞✨', color: '#F5C563', success: true };
+  if (progress < 0.8) return { text: 'A bit dark 😅', color: '#B07A1A', success: false };
+  return { text: 'BURNT! 🔥', color: '#FF6B35', success: false };
+}
+
+function spawnBubble() {
+  if (cookProgress > 0.2 && cookProgress < 0.85 && Math.random() < 0.04) {
+    const cx = W / 2;
+    const cy = H / 2 + 30;
+    const radius = 70;
+    const angle = Math.random() * Math.PI * 2;
+    const r = Math.random() * radius * 0.8;
+    bubbles.push({
+      x: cx + Math.cos(angle) * r,
+      y: cy + Math.sin(angle) * r * 0.4,
+      size: 2 + Math.random() * 4,
+      life: 1,
+      speed: 0.005 + Math.random() * 0.01
+    });
+  }
+}
+
+function spawnSteam() {
+  if (cookProgress > 0.15 && Math.random() < 0.08) {
+    const cx = W / 2;
+    steamParticles.push({
+      x: cx + (Math.random() - 0.5) * 100,
+      y: H / 2 - 10,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -0.5 - Math.random() * 0.8,
+      life: 1,
+      size: 4 + Math.random() * 6
+    });
+  }
+}
+
+function spawnParticles(x, y, color) {
+  for (let i = 0; i < 20; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      life: 1,
+      size: 3 + Math.random() * 5,
+      color
+    });
+  }
+}
+
+function drawPan() {
+  // Pan body
+  ctx.fillStyle = '#2A221B';
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2 + 40, 110, 35, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pan cooking surface
+  ctx.fillStyle = '#3D3229';
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2 + 30, 100, 30, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Inner surface
+  const grad = ctx.createRadialGradient(W / 2, H / 2 + 30, 0, W / 2, H / 2 + 30, 95);
+  grad.addColorStop(0, '#504038');
+  grad.addColorStop(1, '#3D3229');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.ellipse(W / 2, H / 2 + 30, 90, 27, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Handle
+  ctx.fillStyle = '#2A221B';
+  ctx.save();
+  ctx.translate(W / 2 + 100, H / 2 + 35);
+  ctx.rotate(0.05);
+  ctx.fillRect(0, -6, 80, 12);
+  ctx.restore();
+  // Handle tip
+  ctx.fillStyle = '#8B4E1A';
+  ctx.save();
+  ctx.translate(W / 2 + 175, H / 2 + 35);
+  ctx.beginPath();
+  ctx.roundRect(-5, -8, 30, 16, 6);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawPancake(x, y, progress, angle, scale) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  ctx.scale(1, scale || 1);
+
+  const color = getPancakeColor(progress, false);
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.beginPath();
+  ctx.ellipse(3, 3, 70, 22, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Pancake body
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 70, 22, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Highlight
+  const highlight = ctx.createRadialGradient(-15, -5, 0, 0, 0, 70);
+  highlight.addColorStop(0, 'rgba(255,255,255,0.15)');
+  highlight.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = highlight;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 70, 22, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawBubbles() {
+  bubbles.forEach(b => {
+    ctx.fillStyle = `rgba(255, 248, 238, ${b.life * 0.6})`;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawSteam() {
+  steamParticles.forEach(s => {
+    ctx.fillStyle = `rgba(255, 255, 255, ${s.life * 0.15})`;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.fillStyle = p.color.replace(')', `, ${p.life})`).replace('rgb', 'rgba');
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawCookingBar() {
+  const barW = 160;
+  const barH = 8;
+  const x = W / 2 - barW / 2;
+  const y = H - 50;
+
+  // Background
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.beginPath();
+  ctx.roundRect(x, y, barW, barH, 4);
+  ctx.fill();
+
+  // Progress
+  const color = cookProgress < 0.4 ? '#E8CFA0' :
+                cookProgress < 0.65 ? '#D4A030' :
+                cookProgress < 0.8 ? '#B07A1A' : '#FF6B35';
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.roundRect(x, y, barW * cookProgress, barH, 4);
+  ctx.fill();
+
+  // Sweet spot indicator
+  ctx.fillStyle = 'rgba(245, 197, 99, 0.4)';
+  ctx.beginPath();
+  ctx.roundRect(x + barW * 0.4, y - 2, barW * 0.25, barH + 4, 4);
+  ctx.fill();
+
+  // Label
+  ctx.fillStyle = 'rgba(255,248,238,0.4)';
+  ctx.font = '500 11px "DM Sans"';
+  ctx.textAlign = 'center';
+  const label = cookProgress < 0.25 ? 'raw...' :
+                cookProgress < 0.4 ? 'almost...' :
+                cookProgress < 0.65 ? '✨ FLIP NOW! ✨' :
+                cookProgress < 0.8 ? 'getting dark...' : '🔥 burning!';
+  ctx.fillText(label, W / 2, y - 10);
+}
+
+function drawResult() {
+  if (resultTimer <= 0) return;
+  const alpha = Math.min(1, resultTimer / 30);
+  ctx.fillStyle = resultColor;
+  ctx.globalAlpha = alpha;
+  ctx.font = '700 28px "Fraunces"';
+  ctx.textAlign = 'center';
+  ctx.fillText(resultText, W / 2, H / 2 - 60);
+  ctx.globalAlpha = 1;
+}
+
+function update() {
+  if (state === 'cooking') {
+    cookProgress += cookSpeed;
+    spawnBubble();
+    spawnSteam();
+    if (cookProgress >= 1) {
+      // Auto-fail: burnt
+      const rating = getRating(1);
+      resultText = rating.text;
+      resultColor = rating.color;
+      resultTimer = 90;
+      streak = 0;
+      state = 'result';
+    }
+  }
+
+  if (state === 'flipping') {
+    flipAngle += 0.15;
+    flipY -= 3;
+    if (flipAngle >= Math.PI) {
+      flipAngle = Math.PI;
+      flipY = 0;
+      const rating = getRating(cookProgress);
+      resultText = rating.text;
+      resultColor = rating.color;
+      resultTimer = 90;
+      if (rating.success) {
+        score++;
+        streak++;
+        bestStreak = Math.max(bestStreak, streak);
+        spawnParticles(W / 2, H / 2, 'rgb(245, 197, 99)');
+      } else {
+        streak = 0;
+      }
+      document.getElementById('scoreDisplay').textContent = score;
+      document.getElementById('streakDisplay').textContent = bestStreak;
+      state = 'result';
+    }
+  }
+
+  if (state === 'result') {
+    resultTimer--;
+    if (resultTimer <= 0) {
+      state = 'resetting';
+      setTimeout(() => {
+        cookProgress = 0;
+        flipAngle = 0;
+        flipY = 0;
+        bubbles = [];
+        state = 'cooking';
+      }, 300);
+    }
+  }
+
+  // Update bubbles
+  bubbles = bubbles.filter(b => {
+    b.life -= b.speed;
+    b.y -= 0.2;
+    return b.life > 0;
+  });
+
+  // Update steam
+  steamParticles = steamParticles.filter(s => {
+    s.life -= 0.008;
+    s.x += s.vx;
+    s.y += s.vy;
+    s.size += 0.1;
+    return s.life > 0;
+  });
+
+  // Update particles
+  particles = particles.filter(p => {
+    p.life -= 0.02;
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.1;
+    return p.life > 0;
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#5A4A3A');
+  bg.addColorStop(1, '#4A3C31');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  drawSteam();
+  drawPan();
+  drawBubbles();
+
+  if (state === 'flipping') {
+    drawPancake(W / 2, H / 2 + 30 + flipY, cookProgress, flipAngle);
+  } else if (state !== 'resetting') {
+    drawPancake(W / 2, H / 2 + 30, cookProgress, 0);
+  }
+
+  drawParticles();
+
+  if (state === 'cooking') {
+    drawCookingBar();
+  }
+
+  drawResult();
+
+  requestAnimationFrame(draw);
+  update();
+}
+
+canvas.addEventListener('click', () => {
+  if (state === 'cooking') {
+    state = 'flipping';
+    flipAngle = 0;
+    flipY = 0;
+  }
+});
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  if (state === 'cooking') {
+    state = 'flipping';
+    flipAngle = 0;
+    flipY = 0;
+  }
+});
+
+function resetGame() {
+  score = 0;
+  streak = 0;
+  bestStreak = 0;
+  document.getElementById('scoreDisplay').textContent = 0;
+  document.getElementById('streakDisplay').textContent = 0;
+  cookProgress = 0;
+  flipAngle = 0;
+  flipY = 0;
+  bubbles = [];
+  particles = [];
+  state = 'cooking';
+}
+
+draw();
+</script>
+
+</body>
+</html>

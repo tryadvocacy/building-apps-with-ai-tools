@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI App Development Workflow - Overview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #F5F3EB;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            width: 1200px;
+            height: 675px;
+            background: #F5F3EB;
+            position: relative;
+            padding: 30px 50px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #5C5750;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .workflow-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 60px;
+            height: 480px;
+        }
+        .cycle {
+            position: relative;
+            width: 420px;
+            height: 400px;
+            flex-shrink: 0;
+        }
+        .phase {
+            position: absolute;
+            width: 140px;
+            text-align: center;
+        }
+        .phase-box {
+            border: 3px solid #000;
+            padding: 16px 12px;
+            background: white;
+            transition: transform 0.2s;
+        }
+        .phase-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .phase-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+        }
+        .phase-hint {
+            font-size: 10px;
+            color: #5C5750;
+            margin-top: 4px;
+        }
+        /* Position each phase in a pentagon */
+        .phase-1 { top: 0; left: 50%; transform: translateX(-50%); }
+        .phase-2 { top: 80px; right: 0; }
+        .phase-3 { bottom: 50px; right: 40px; }
+        .phase-4 { bottom: 50px; left: 40px; }
+        .phase-5 { top: 80px; left: 0; }
+
+        /* Color coding */
+        .phase-1 .phase-box { background: #5B9BD5; }
+        .phase-1 .phase-icon, .phase-1 .phase-name { color: white; }
+        .phase-1 .phase-hint { color: rgba(255,255,255,0.8); }
+
+        .phase-2 .phase-box { background: #F5C542; }
+        .phase-3 .phase-box { background: #7CB56B; }
+        .phase-3 .phase-icon, .phase-3 .phase-name { color: white; }
+        .phase-3 .phase-hint { color: rgba(255,255,255,0.8); }
+
+        .phase-4 .phase-box { background: #E86B5A; }
+        .phase-4 .phase-icon, .phase-4 .phase-name { color: white; }
+        .phase-4 .phase-hint { color: rgba(255,255,255,0.8); }
+
+        .phase-5 .phase-box { background: #F5F4F1; }
+
+        /* Arrows */
+        .arrow {
+            position: absolute;
+            font-size: 24px;
+            color: #8A847A;
+        }
+        .arrow-1 { top: 50px; right: 80px; transform: rotate(40deg); }
+        .arrow-2 { top: 190px; right: 20px; transform: rotate(70deg); }
+        .arrow-3 { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        .arrow-4 { top: 190px; left: 20px; transform: rotate(-70deg); }
+        .arrow-5 { top: 50px; left: 80px; transform: rotate(-40deg); }
+
+        .center-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .center-label .main {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2A2825;
+        }
+        .center-label .sub {
+            font-size: 11px;
+            color: #8A847A;
+            margin-top: 4px;
+        }
+
+        .side-note {
+            width: 280px;
+            background: white;
+            border: 2px solid #000;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+        .side-note-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #DDD9D2;
+        }
+        .side-note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #2A2825;
+        }
+        .side-note-num {
+            width: 20px;
+            height: 20px;
+            background: #5B9BD5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Building Apps with AI Tools</h1>
+        <p class="subtitle">A repeatable workflow for shipping software with AI assistance</p>
+
+        <div class="workflow-area">
+            <div class="cycle">
+                <!-- Phase 1: Problem -->
+                <div class="phase phase-1">
+                    <div class="phase-box">
+                        <div class="phase-icon">💡</div>
+                        <div class="phase-name">Problem</div>
+                        <div class="phase-hint">Define what to build</div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: App Flow -->
+                <div class="phase phase-2">
+                    <div class="phase-box">
+                        <div class="phase-icon">⎔→⎕</div>
+                        <div class="phase-name">App Flow</div>
+                        <div class="phase-hint">Sketch the UX</div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Spec Doc -->
+                <div class="phase phase-3">
+                    <div class="phase-box">
+                        <div class="phase-icon">📋</div>
+                        <div class="phase-name">Spec Doc</div>
+                        <div class="phase-hint">Write the PRD</div>
+                    </div>
+                </div>
+
+                <!-- Phase 4: Build -->
+                <div class="phase phase-4">
+                    <div class="phase-box">
+                        <div class="phase-icon">⚒</div>
+                        <div class="phase-name">Build</div>
+                        <div class="phase-hint">Code with AI</div>
+                    </div>
+                </div>
+
+                <!-- Phase 5: Use & Improve -->
+                <div class="phase phase-5">
+                    <div class="phase-box">
+                        <div class="phase-icon">↻</div>
+                        <div class="phase-name">Use & Improve</div>
+                        <div class="phase-hint">Deploy & iterate</div>
+                    </div>
+                </div>
+
+                <!-- Arrows -->
+                <span class="arrow arrow-1">→</span>
+                <span class="arrow arrow-2">→</span>
+                <span class="arrow arrow-3">←</span>
+                <span class="arrow arrow-4">→</span>
+                <span class="arrow arrow-5">→</span>
+
+                <div class="center-label">
+                    <div class="main">Continuous Cycle</div>
+                    <div class="sub">Each iteration improves the app</div>
+                </div>
+            </div>
+
+            <div class="side-note">
+                <div class="side-note-title">The AI-Assisted Pattern</div>
+                <div class="side-note-item">
+                    <span class="side-note-num">1</span>
+                    <span><strong>You</strong> define the problem and make decisions</span>
+                </div>
+                <div class="side-note-item">
+                    <span class="side-note-num">2</span>
+                    <span><strong>AI</strong> helps research, draft, and generate code</span>
+                </div>
+                <div class="side-note-item">
+                    <span class="side-note-num">3</span>
+                    <span><strong>You</strong> review, test, and iterate</span>
+                </div>
+                <div class="side-note-item">
+                    <span class="side-note-num">4</span>
+                    <span>Repeat — each cycle gets faster</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frame 3: Context Rot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #F5F3EB;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            width: 1200px;
+            height: 675px;
+            background: #F5F3EB;
+            position: relative;
+            padding: 25px 50px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #000;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #5C5750;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .content {
+            display: flex;
+            gap: 50px;
+            height: calc(100% - 100px);
+        }
+        .graph-section {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+        }
+        .graph-container {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: white;
+            border: 2px solid #000;
+            padding: 30px 40px 50px 60px;
+        }
+        .y-axis-label {
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: rotate(-90deg) translateX(50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #5C5750;
+            white-space: nowrap;
+        }
+        .x-axis-label {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #5C5750;
+        }
+        .graph-area {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .grid-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 1px dashed #DDD9D2;
+        }
+        .zone-green {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 35%;
+            height: 100%;
+            background: rgba(124, 181, 107, 0.15);
+            border-right: 2px dashed #7CB56B;
+        }
+        .zone-red {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 40%;
+            height: 100%;
+            background: rgba(232, 107, 90, 0.15);
+            border-left: 2px dashed #E86B5A;
+        }
+        .zone-label {
+            position: absolute;
+            top: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+        }
+        .zone-label.green {
+            left: 10px;
+            color: #7CB56B;
+        }
+        .zone-label.red {
+            right: 10px;
+            color: #E86B5A;
+        }
+        .curve {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .curve svg {
+            width: 100%;
+            height: 100%;
+        }
+        .axis-tick {
+            position: absolute;
+            font-size: 10px;
+            color: #8A847A;
+        }
+        .tick-high {
+            left: -35px;
+            top: 5px;
+        }
+        .tick-low {
+            left: -30px;
+            bottom: 5px;
+        }
+        .tick-small {
+            bottom: -25px;
+            left: 5px;
+        }
+        .tick-large {
+            bottom: -25px;
+            right: 5px;
+        }
+        .comparison-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .comparison-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+        }
+        .prompt-box {
+            border: 2px solid #000;
+            padding: 15px;
+            background: white;
+        }
+        .prompt-box.bad {
+            border-color: #E86B5A;
+        }
+        .prompt-box.good {
+            border-color: #7CB56B;
+        }
+        .prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .prompt-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 2px solid #000;
+        }
+        .prompt-icon.bad {
+            background: #E86B5A;
+            color: white;
+        }
+        .prompt-icon.good {
+            background: #7CB56B;
+            color: white;
+        }
+        .prompt-label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .prompt-label.bad { color: #E86B5A; }
+        .prompt-label.good { color: #7CB56B; }
+        .prompt-content {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #5C5750;
+            font-family: monospace;
+            background: #F5F4F1;
+            padding: 10px;
+            max-height: 80px;
+            overflow: hidden;
+            position: relative;
+        }
+        .prompt-content.bad::after {
+            content: '...';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #F5F4F1;
+            padding-left: 10px;
+        }
+        .prompt-question {
+            font-size: 12px;
+            color: #000;
+            font-weight: 500;
+            margin-top: 10px;
+            padding: 8px;
+            background: #5B9BD5;
+            color: white;
+        }
+        .takeaway-box {
+            background: #F5C542;
+            border: 2px solid #000;
+            padding: 14px 18px;
+            margin-top: auto;
+        }
+        .takeaway-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 6px;
+        }
+        .takeaway-content {
+            font-size: 12px;
+            color: #2A2825;
+            line-height: 1.5;
+        }
+        .source {
+            position: absolute;
+            bottom: 10px;
+            right: 50px;
+            font-size: 10px;
+            color: #8A847A;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Context Rot</h1>
+        <p class="subtitle">More context ≠ better results. Research shows performance degrades as input length increases.</p>
+
+        <div class="content">
+            <div class="graph-section">
+                <div class="graph-container">
+                    <div class="y-axis-label">Quality of Responses →</div>
+                    <div class="x-axis-label">Amount of Context →</div>
+
+                    <div class="graph-area">
+                        <!-- Grid lines -->
+                        <div class="grid-line" style="top: 25%"></div>
+                        <div class="grid-line" style="top: 50%"></div>
+                        <div class="grid-line" style="top: 75%"></div>
+
+                        <!-- Zones -->
+                        <div class="zone-green">
+                            <span class="zone-label green">FOCUSED</span>
+                        </div>
+                        <div class="zone-red">
+                            <span class="zone-label red">BLOATED</span>
+                        </div>
+
+                        <!-- Axis ticks -->
+                        <span class="axis-tick tick-high">High</span>
+                        <span class="axis-tick tick-low">Low</span>
+                        <span class="axis-tick tick-small">Small</span>
+                        <span class="axis-tick tick-large">Large</span>
+
+                        <!-- Curve -->
+                        <div class="curve">
+                            <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#7CB56B"/>
+                                        <stop offset="50%" style="stop-color:#F5C542"/>
+                                        <stop offset="100%" style="stop-color:#E86B5A"/>
+                                    </linearGradient>
+                                </defs>
+                                <!-- Performance curve - starts high, degrades -->
+                                <path d="M 10 30
+                                         Q 60 35, 100 50
+                                         Q 150 70, 200 100
+                                         Q 280 140, 350 160
+                                         Q 380 175, 395 180"
+                                      stroke="url(#curveGradient)"
+                                      stroke-width="4"
+                                      fill="none"/>
+                                <!-- Data points -->
+                                <circle cx="40" cy="32" r="5" fill="#7CB56B" stroke="#000" stroke-width="2"/>
+                                <circle cx="100" cy="50" r="5" fill="#7CB56B" stroke="#000" stroke-width="2"/>
+                                <circle cx="160" cy="75" r="5" fill="#F5C542" stroke="#000" stroke-width="2"/>
+                                <circle cx="240" cy="115" r="5" fill="#F5C542" stroke="#000" stroke-width="2"/>
+                                <circle cx="320" cy="150" r="5" fill="#E86B5A" stroke="#000" stroke-width="2"/>
+                                <circle cx="380" cy="175" r="5" fill="#E86B5A" stroke="#000" stroke-width="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="takeaway-box">
+                    <div class="takeaway-title">💡 Practical Takeaway</div>
+                    <div class="takeaway-content">
+                        Just because a model <em>can</em> accept 200k tokens doesn't mean you <em>should</em> give it 200k tokens. Extract relevant sections. Start fresh conversations. Keep the context window clean.
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">Same Question, Different Results</div>
+
+                <div class="prompt-box bad">
+                    <div class="prompt-header">
+                        <div class="prompt-icon bad">✗</div>
+                        <span class="prompt-label bad">Bloated Prompt</span>
+                    </div>
+                    <div class="prompt-content bad">
+Chapter 1: Introduction to Machine Learning
+Machine learning is a subset of artificial intelligence that enables systems to learn from data. In this comprehensive guide, we will explore various algorithms including supervised learning, unsupervised learning, and reinforcement learning. The history of machine learning dates back to the 1950s when Arthur Samuel...
+[2,847 more words of context...]
+                    </div>
+                    <div class="prompt-question">What's the learning rate?</div>
+                </div>
+
+                <div class="prompt-box good">
+                    <div class="prompt-header">
+                        <div class="prompt-icon good">✓</div>
+                        <span class="prompt-label good">Focused Prompt</span>
+                    </div>
+                    <div class="prompt-content">
+From the training config:
+learning_rate: 0.001
+batch_size: 32
+epochs: 100
+                    </div>
+                    <div class="prompt-question">What's the learning rate?</div>
+                </div>
+
+                <div style="background: #F5F4F1; border: 2px solid #000; padding: 12px; margin-top: 10px;">
+                    <div style="font-size: 11px; color: #5C5750; line-height: 1.5;">
+                        <strong style="color: #000;">Research finding:</strong> When irrelevant information was added to conversations, <em>all 18 tested models</em> performed significantly worse — even on simple retrieval tasks.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="source">Source: Chroma Research — "Context Rot: How Increasing Input Tokens Impacts LLM Performance"</div>
+    </div>
+</body>
+</html>

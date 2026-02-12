@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 5: Use & Improve</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #F5F3EB;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .container {
+            width: 1200px;
+            height: 675px;
+            background: #F5F3EB;
+            position: relative;
+            padding: 30px 50px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .phase-badge {
+            background: #5C5750;
+            color: white;
+            padding: 8px 16px;
+            border: 2px solid #000;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000;
+        }
+        .title-icon {
+            font-size: 32px;
+            margin-left: 12px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #5C5750;
+            margin-top: 8px;
+            margin-left: 120px;
+        }
+        .content {
+            display: flex;
+            gap: 40px;
+            margin-top: 25px;
+        }
+        .main-content {
+            flex: 1.2;
+        }
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .action-card {
+            background: white;
+            border: 2px solid #000;
+            padding: 18px;
+        }
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .action-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+        }
+        .action-desc {
+            font-size: 12px;
+            color: #5C5750;
+            line-height: 1.5;
+        }
+        .action-tools {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .tool-tag {
+            background: #F5F4F1;
+            border: 1px solid #DDD9D2;
+            padding: 3px 8px;
+            font-size: 10px;
+            color: #5C5750;
+        }
+        .cycle-back {
+            margin-top: 20px;
+            background: #F5C542;
+            border: 2px solid #000;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .cycle-icon {
+            font-size: 32px;
+        }
+        .cycle-text {
+            flex: 1;
+        }
+        .cycle-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+        }
+        .cycle-desc {
+            font-size: 12px;
+            color: #2A2825;
+        }
+        .side-panel {
+            width: 340px;
+        }
+        .mindset-box {
+            background: white;
+            border: 2px solid #000;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .mindset-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #DDD9D2;
+        }
+        .mindset-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 14px;
+            align-items: flex-start;
+        }
+        .mindset-item:last-child {
+            margin-bottom: 0;
+        }
+        .mindset-check {
+            width: 20px;
+            height: 20px;
+            background: #7CB56B;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .mindset-text {
+            font-size: 12px;
+            color: #2A2825;
+            line-height: 1.5;
+        }
+        .quote-box {
+            background: #5B9BD5;
+            border: 2px solid #000;
+            padding: 18px;
+            color: white;
+        }
+        .quote-text {
+            font-size: 14px;
+            font-style: italic;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .quote-author {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+        .nav-hint {
+            position: absolute;
+            bottom: 20px;
+            right: 50px;
+            font-size: 12px;
+            color: #8A847A;
+        }
+        .nav-hint span {
+            color: #5B9BD5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="phase-badge">PHASE 5</div>
+            <div>
+                <h1 class="title">Use & Improve<span class="title-icon">↻</span></h1>
+            </div>
+        </div>
+        <p class="subtitle">Ship it, use it yourself, gather feedback, and iterate. The cycle continues.</p>
+
+        <div class="content">
+            <div class="main-content">
+                <div class="phase-grid">
+                    <div class="action-card">
+                        <div class="action-icon">🚀</div>
+                        <div class="action-title">Deploy</div>
+                        <div class="action-desc">
+                            Get it live. Even a rough version on Vercel or as a local script counts.
+                            Deployed code teaches you things localhost never will.
+                        </div>
+                        <div class="action-tools">
+                            <span class="tool-tag">Vercel</span>
+                            <span class="tool-tag">Docker</span>
+                            <span class="tool-tag">Local script</span>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">🧪</div>
+                        <div class="action-title">Use It Yourself</div>
+                        <div class="action-desc">
+                            Dogfood your creation. Use it daily. Notice the friction. Keep a running
+                            list of annoyances and ideas.
+                        </div>
+                        <div class="action-tools">
+                            <span class="tool-tag">Notes app</span>
+                            <span class="tool-tag">Voice memos</span>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">🔧</div>
+                        <div class="action-title">Debug & Fix</div>
+                        <div class="action-desc">
+                            Real usage reveals real bugs. Use AI to help investigate and fix issues
+                            as they appear.
+                        </div>
+                        <div class="action-tools">
+                            <span class="tool-tag">Console logs</span>
+                            <span class="tool-tag">Claude for debugging</span>
+                        </div>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">✨</div>
+                        <div class="action-title">Iterate Features</div>
+                        <div class="action-desc">
+                            Add what you actually need. Remove what you don't use. Let real usage
+                            guide the roadmap.
+                        </div>
+                        <div class="action-tools">
+                            <span class="tool-tag">Back to Build phase</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cycle-back">
+                    <div class="cycle-icon">↺</div>
+                    <div class="cycle-text">
+                        <div class="cycle-title">Back to Problem</div>
+                        <div class="cycle-desc">
+                            Found a new problem while using your app? Great — that's your next project.
+                            The cycle continues, each iteration faster than the last.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panel">
+                <div class="mindset-box">
+                    <div class="mindset-title">The "Home-cooked Software" Mindset</div>
+                    <div class="mindset-item">
+                        <span class="mindset-check">✓</span>
+                        <span class="mindset-text"><strong>It doesn't need to be perfect</strong> — just useful for you</span>
+                    </div>
+                    <div class="mindset-item">
+                        <span class="mindset-check">✓</span>
+                        <span class="mindset-text"><strong>Rough edges are fine</strong> — you know how to work around them</span>
+                    </div>
+                    <div class="mindset-item">
+                        <span class="mindset-check">✓</span>
+                        <span class="mindset-text"><strong>Ship fast, improve later</strong> — done is better than perfect</span>
+                    </div>
+                    <div class="mindset-item">
+                        <span class="mindset-check">✓</span>
+                        <span class="mindset-text"><strong>Your app, your rules</strong> — no PM, no stakeholders, no roadmap</span>
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <div class="quote-text">
+                        "Software you make for yourself to use, like home-cooked meals, doesn't have to scale or be polished. It just has to work for you."
+                    </div>
+                    <div class="quote-author">— Robin Sloan, on personal software</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-hint">Full Cycle: <span>Problem → App Flow → Spec → Build → Use & Improve → ↺</span></div>
+    </div>
+</body>
+</html>

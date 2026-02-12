@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Model Capabilities</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .container {
+            width: 1200px;
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            padding: 48px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: #000000;
+            margin-bottom: 48px;
+            letter-spacing: -0.5px;
+        }
+
+        .bridge-diagram {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin-bottom: 40px;
+        }
+
+        .side-panel {
+            flex: 1;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .left-panel {
+            background: #F5F5F5;
+            border: 2px solid #000000;
+            border-right: none;
+        }
+
+        .right-panel {
+            background: #000000;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            border-left: none;
+        }
+
+        .panel-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .panel-examples {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.6;
+        }
+
+        .right-panel .panel-examples {
+            color: #CCCCCC;
+        }
+
+        .center-bridge {
+            width: 320px;
+            background: linear-gradient(90deg, #F5F5F5 0%, #000000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 24px 16px;
+            border-top: 2px solid #000000;
+            border-bottom: 2px solid #000000;
+        }
+
+        .capability {
+            background: #FFFFFF;
+            border: 2px solid #000000;
+            padding: 12px 16px;
+            margin: 6px 0;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            position: relative;
+            color: #000000;
+        }
+
+        .capability::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            width: 18px;
+            height: 2px;
+            background: #000000;
+        }
+
+        .capability::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 18px;
+            height: 2px;
+            background: #FFFFFF;
+        }
+
+        .takeaway {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 24px 32px;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.6;
+            border: 2px solid #000000;
+        }
+
+        .takeaway strong {
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+
+        .arrow-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 0;
+            font-size: 24px;
+            color: #000000;
+            letter-spacing: 8px;
+        }
+
+        /* Print optimization */
+        @media print {
+            body {
+                padding: 0;
+            }
+            .container {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Language Model Capabilities</h1>
+
+        <div class="bridge-diagram">
+            <div class="side-panel left-panel">
+                <div class="panel-icon">💬</div>
+                <div class="panel-title">Natural Language</div>
+                <div class="panel-examples">
+                    "Build me a budget tracker"<br>
+                    "Why isn't this working?"<br>
+                    "Make it more user-friendly"
+                </div>
+            </div>
+
+            <div class="center-bridge">
+                <div class="capability">Understand instructions</div>
+                <div class="capability">Generate working code</div>
+                <div class="capability">Debug & refactor</div>
+                <div class="capability">Explain concepts</div>
+                <div class="capability">Translate tech ↔ non-tech</div>
+            </div>
+
+            <div class="side-panel right-panel">
+                <div class="panel-icon">⚡</div>
+                <div class="panel-title">Working Software</div>
+                <div class="panel-examples">
+                    HTML, CSS, JavaScript<br>
+                    Python, APIs, Databases<br>
+                    Tested & Documented
+                </div>
+            </div>
+        </div>
+
+        <div class="arrow-indicator">→ → → → →</div>
+
+        <div class="takeaway">
+            These capabilities <strong>lower the entry barrier</strong> to software development<br>
+            and enable <strong>barefoot developers</strong> to create solutions without years of training.
+        </div>
+    </div>
+</body>
+</html>
