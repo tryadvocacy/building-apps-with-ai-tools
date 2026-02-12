@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folder → Excel Extractor</title>
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== AUTOMATA LEARNING LAB BRAND TOKENS ===== */
+        :root {
+            /* Primary */
+            --ink-black: #000000;
+            --warm-cream: #F5F3EB;
+
+            /* Accent Colors */
+            --coral: #E86B5A;
+            --golden: #F5C542;
+            --sage: #7CB56B;
+            --sky: #5B9BD5;
+
+            /* Light Tints */
+            --coral-light: #FBEAE7;
+            --golden-light: #FEF8E6;
+            --sage-light: #EEF5EC;
+            --sky-light: #E8F1F9;
+
+            /* Gray Scale */
+            --gray-100: #F5F4F1;
+            --gray-300: #DDD9D2;
+            --gray-500: #8A847A;
+            --gray-600: #5C5750;
+            --gray-800: #2A2825;
+
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 40px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans', Arial, sans-serif;
+            background: var(--warm-cream);
+            min-height: 100vh;
+            padding: var(--space-xl);
+            color: var(--gray-800);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--ink-black);
+            text-align: center;
+            margin-bottom: var(--space-sm);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: var(--space-lg);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid var(--ink-black);
+            border-radius: 0;
+            padding: var(--space-lg);
+            transition: transform 0.2s ease;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 3px dashed var(--ink-black);
+            border-radius: 0;
+            padding: var(--space-xl) var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--gray-100);
+        }
+
+        .drop-zone:hover {
+            border-color: var(--coral);
+            background: var(--coral-light);
+        }
+
+        .drop-zone-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .drop-zone h2 {
+            color: var(--ink-black);
+            margin-bottom: var(--space-sm);
+            font-weight: 700;
+        }
+
+        .drop-zone p {
+            color: var(--gray-600);
+            margin-bottom: var(--space-md);
+        }
+
+        .supported-types {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .type-badge {
+            background: var(--ink-black);
+            color: white;
+            padding: var(--space-xs) var(--space-md);
+            border-radius: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .type-badge.image {
+            background: var(--sage);
+        }
+
+        /* Hidden file input */
+        #folderInput {
+            display: none;
+        }
+
+        /* Summary Section */
+        .summary {
+            background: var(--sky-light);
+            border-left: 4px solid var(--sky);
+            border-radius: 0;
+            padding: var(--space-md) var(--space-lg);
+            margin-bottom: var(--space-lg);
+            display: none;
+        }
+
+        .summary.visible {
+            display: block;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            color: var(--ink-black);
+            margin-bottom: var(--space-sm);
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 0.95rem;
+            color: var(--gray-800);
+        }
+
+        .stat-count {
+            font-weight: 600;
+            color: var(--sky);
+        }
+
+        /* Progress Section */
+        .progress-section {
+            display: none;
+            margin-bottom: var(--space-lg);
+        }
+
+        .progress-section.visible {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--space-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-300);
+            border-radius: 0;
+            overflow: hidden;
+            border: 1px solid var(--ink-black);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--coral);
+            border-radius: 0;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-status {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: var(--space-sm);
+        }
+
+        /* Preview Table */
+        .preview-section {
+            display: none;
+        }
+
+        .preview-section.visible {
+            display: block;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .preview-header h3 {
+            color: var(--ink-black);
+            font-weight: 700;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border: 2px solid var(--ink-black);
+            border-radius: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--gray-100);
+            padding: var(--space-md);
+            text-align: left;
+            font-weight: 600;
+            color: var(--ink-black);
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid var(--ink-black);
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--gray-300);
+            vertical-align: top;
+        }
+
+        tr:hover {
+            background: var(--gray-100);
+        }
+
+        .filename-cell {
+            font-weight: 500;
+            color: var(--ink-black);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .path-cell {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .type-cell {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .type-txt { color: var(--sky); }
+        .type-md { color: var(--coral); }
+        .type-pdf { color: var(--coral); }
+        .type-docx { color: var(--sky); }
+        .type-image { color: var(--sage); }
+
+        .status-cell {
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .status-success { color: var(--sage); }
+        .status-partial { color: var(--golden); }
+        .status-error { color: var(--coral); }
+        .status-metadata { color: var(--gray-500); }
+
+        .preview-cell {
+            max-width: 300px;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .remove-btn {
+            background: none;
+            border: 2px solid var(--coral);
+            color: var(--coral);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 0;
+            transition: all 0.2s;
+            font-weight: 700;
+        }
+
+        .remove-btn:hover {
+            background: var(--coral);
+            color: white;
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+            justify-content: center;
+        }
+
+        .btn {
+            padding: var(--space-md) var(--space-lg);
+            border: none;
+            border-radius: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--coral);
+            color: white;
+            border: 2px solid var(--coral);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0 var(--ink-black);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--ink-black);
+            border: 2px solid var(--ink-black);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0 var(--ink-black);
+        }
+
+        /* Error Display */
+        .error-message {
+            background: var(--coral-light);
+            border-left: 4px solid var(--coral);
+            border-radius: 0;
+            padding: var(--space-md);
+            color: var(--coral);
+            margin-top: var(--space-md);
+            display: none;
+            font-weight: 500;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        /* File count indicator */
+        .file-count {
+            background: var(--ink-black);
+            color: white;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: 0;
+            font-size: 0.8rem;
+            margin-left: var(--space-sm);
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Folder → Excel Extractor</h1>
+        <p class="subtitle">Extract content from your files and export to a structured Excel workbook</p>
+
+        <div class="card">
+            <!-- Drop Zone (Landing State) -->
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">📁</div>
+                <h2>Select a Folder</h2>
+                <p>Click to browse or use the button below</p>
+                <input type="file" id="folderInput" webkitdirectory multiple>
+                <div class="supported-types">
+                    <span class="type-badge">.txt</span>
+                    <span class="type-badge">.md</span>
+                    <span class="type-badge">.pdf</span>
+                    <span class="type-badge">.docx</span>
+                    <span class="type-badge image">.png</span>
+                    <span class="type-badge image">.jpg</span>
+                    <span class="type-badge image">.gif</span>
+                    <span class="type-badge image">.webp</span>
+                    <span class="type-badge image">.svg</span>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary" id="summary">
+                <div class="summary-title">📊 Files Detected</div>
+                <div class="summary-stats" id="summaryStats"></div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-section" id="progressSection">
+                <div class="progress-header">
+                    <span>Processing files...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-status" id="progressStatus">Initializing...</div>
+            </div>
+
+            <!-- Preview Table -->
+            <div class="preview-section" id="previewSection">
+                <div class="preview-header">
+                    <h3>Preview <span class="file-count" id="fileCount">0</span></h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Filename</th>
+                                <th>Path</th>
+                                <th>Type</th>
+                                <th>Size</th>
+                                <th>Status</th>
+                                <th>Preview</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Actions -->
+            <div class="actions" id="actions" style="display: none;">
+                <button class="btn btn-secondary" id="resetBtn">Start Over</button>
+                <button class="btn btn-primary" id="exportBtn" disabled>Download Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configure pdf.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // ==================== CONFIGURATION ====================
+        const CONFIG = {
+            TRUNCATION_THRESHOLD: 2000,
+            HEAD_CHARS: 1200,
+            TAIL_CHARS: 600,
+            EXCEL_CELL_LIMIT: 32000,
+            PREVIEW_CHARS: 150,
+            MAX_FILES: 50
+        };
+
+        // Supported file types
+        const FILE_TYPES = {
+            text: ['.txt'],
+            markdown: ['.md'],
+            pdf: ['.pdf'],
+            docx: ['.docx'],
+            image: ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg']
+        };
+
+        // ==================== STATE ====================
+        let processedFiles = [];
+
+        // ==================== DOM ELEMENTS ====================
+        const dropZone = document.getElementById('dropZone');
+        const folderInput = document.getElementById('folderInput');
+        const summary = document.getElementById('summary');
+        const summaryStats = document.getElementById('summaryStats');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressStatus = document.getElementById('progressStatus');
+        const previewSection = document.getElementById('previewSection');
+        const previewBody = document.getElementById('previewBody');
+        const fileCount = document.getElementById('fileCount');
+        const actions = document.getElementById('actions');
+        const exportBtn = document.getElementById('exportBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // ==================== EVENT LISTENERS ====================
+        dropZone.addEventListener('click', () => folderInput.click());
+        folderInput.addEventListener('change', handleFolderSelect);
+        exportBtn.addEventListener('click', exportToExcel);
+        resetBtn.addEventListener('click', resetApp);
+
+        // ==================== FILE DETECTION ====================
+        function getFileExtension(filename) {
+            const ext = filename.toLowerCase().match(/\.[^.]+$/);
+            return ext ? ext[0] : '';
+        }
+
+        function getFileType(filename) {
+            const ext = getFileExtension(filename);
+            for (const [type, extensions] of Object.entries(FILE_TYPES)) {
+                if (extensions.includes(ext)) return type;
+            }
+            return null;
+        }
+
+        function categorizeFiles(fileList) {
+            const categories = {
+                text: [],
+                markdown: [],
+                pdf: [],
+                docx: [],
+                image: [],
+                skipped: []
+            };
+
+            for (const file of fileList) {
+                const type = getFileType(file.name);
+                if (type) {
+                    categories[type].push(file);
+                } else {
+                    categories.skipped.push(file);
+                }
+            }
+
+            return categories;
+        }
+
+        // ==================== SMART TRUNCATION ENGINE ====================
+        function findSentenceEnd(text, startPos) {
+            const sentenceEnders = /[.!?]\s|\n\n/g;
+            sentenceEnders.lastIndex = startPos;
+            const match = sentenceEnders.exec(text);
+            return match ? match.index + match[0].length : startPos;
+        }
+
+        function findSentenceStart(text, endPos) {
+            // Look backwards for sentence start
+            const searchText = text.substring(0, endPos);
+            const matches = [...searchText.matchAll(/[.!?]\s|\n\n/g)];
+            if (matches.length > 0) {
+                const lastMatch = matches[matches.length - 1];
+                return lastMatch.index + lastMatch[0].length;
+            }
+            return 0;
+        }
+
+        function smartTruncate(content) {
+            if (!content || content.length <= CONFIG.TRUNCATION_THRESHOLD) {
+                return { truncated: content, isTruncated: false };
+            }
+
+            // Find head chunk ending at sentence boundary
+            let headEnd = findSentenceEnd(content, CONFIG.HEAD_CHARS);
+            if (headEnd > CONFIG.HEAD_CHARS + 200) {
+                headEnd = CONFIG.HEAD_CHARS; // Fallback if sentence is too long
+            }
+            const head = content.substring(0, headEnd).trim();
+
+            // Find tail chunk starting at sentence boundary
+            const tailSearchStart = content.length - CONFIG.TAIL_CHARS;
+            let tailStart = findSentenceStart(content, tailSearchStart);
+            if (tailSearchStart - tailStart > 200) {
+                tailStart = tailSearchStart; // Fallback
+            }
+            const tail = content.substring(tailStart).trim();
+
+            const truncatedChars = content.length - head.length - tail.length;
+            const separator = `\n\n[... truncated ${truncatedChars.toLocaleString()} characters ...]\n\n`;
+
+            return {
+                truncated: head + separator + tail,
+                isTruncated: true
+            };
+        }
+
+        // ==================== FILE EXTRACTION ====================
+        async function extractTextFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('Failed to read text file'));
+                reader.readAsText(file);
+            });
+        }
+
+        async function extractPdfFile(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullText = '';
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + '\n\n';
+                }
+
+                return fullText.trim();
+            } catch (error) {
+                throw new Error(`PDF extraction failed: ${error.message}`);
+            }
+        }
+
+        async function extractDocxFile(file) {
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer });
+                return result.value;
+            } catch (error) {
+                throw new Error(`DOCX extraction failed: ${error.message}`);
+            }
+        }
+
+        async function extractImageMetadata(file) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+
+                img.onload = () => {
+                    URL.revokeObjectURL(url);
+                    resolve({
+                        width: img.naturalWidth,
+                        height: img.naturalHeight
+                    });
+                };
+
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    resolve({ width: null, height: null });
+                };
+
+                img.src = url;
+            });
+        }
+
+        // ==================== FILE PROCESSING ====================
+        async function processFile(file, type) {
+            const result = {
+                filename: file.name,
+                path: file.webkitRelativePath || file.name,
+                type: type,
+                size: file.size,
+                sizeKB: (file.size / 1024).toFixed(2),
+                status: 'success',
+                statusText: '✓ Extracted',
+                content: '',
+                smartPreview: '',
+                preview: '',
+                charCount: 0,
+                wordCount: 0,
+                error: null,
+                // Image-specific
+                dimensions: null,
+                format: null
+            };
+
+            try {
+                if (type === 'image') {
+                    const metadata = await extractImageMetadata(file);
+                    result.dimensions = metadata.width && metadata.height
+                        ? `${metadata.width} × ${metadata.height}`
+                        : 'Unknown';
+                    result.format = getFileExtension(file.name).replace('.', '').toUpperCase();
+                    result.status = 'metadata';
+                    result.statusText = '— Metadata only';
+                    result.preview = `Image: ${result.dimensions}`;
+                } else {
+                    let content = '';
+
+                    if (type === 'text' || type === 'markdown') {
+                        content = await extractTextFile(file);
+                    } else if (type === 'pdf') {
+                        content = await extractPdfFile(file);
+                    } else if (type === 'docx') {
+                        content = await extractDocxFile(file);
+                    }
+
+                    result.content = content;
+                    result.charCount = content.length;
+                    result.wordCount = content.split(/\s+/).filter(w => w.length > 0).length;
+
+                    // Smart truncation
+                    const { truncated, isTruncated } = smartTruncate(content);
+                    result.smartPreview = truncated;
+
+                    if (isTruncated) {
+                        result.status = 'partial';
+                        result.statusText = '⚠ Partial';
+                    }
+
+                    // Short preview for table
+                    result.preview = content.substring(0, CONFIG.PREVIEW_CHARS).replace(/\s+/g, ' ').trim();
+                    if (content.length > CONFIG.PREVIEW_CHARS) {
+                        result.preview += '...';
+                    }
+                }
+            } catch (error) {
+                result.status = 'error';
+                result.statusText = '✗ Error';
+                result.error = error.message;
+                result.preview = error.message;
+            }
+
+            return result;
+        }
+
+        // ==================== UI UPDATES ====================
+        function updateSummary(categories) {
+            const total = Object.values(categories).reduce((sum, arr) => sum + arr.length, 0) - categories.skipped.length;
+            const parts = [];
+
+            if (categories.text.length) parts.push(`<span class="stat"><span class="stat-count">${categories.text.length}</span> text</span>`);
+            if (categories.markdown.length) parts.push(`<span class="stat"><span class="stat-count">${categories.markdown.length}</span> markdown</span>`);
+            if (categories.pdf.length) parts.push(`<span class="stat"><span class="stat-count">${categories.pdf.length}</span> PDF</span>`);
+            if (categories.docx.length) parts.push(`<span class="stat"><span class="stat-count">${categories.docx.length}</span> DOCX</span>`);
+            if (categories.image.length) parts.push(`<span class="stat"><span class="stat-count">${categories.image.length}</span> images</span>`);
+            if (categories.skipped.length) parts.push(`<span class="stat" style="color: #94a3b8;">(${categories.skipped.length} skipped)</span>`);
+
+            summaryStats.innerHTML = `Found <strong>${total}</strong> files: ${parts.join(' ')}`;
+            summary.classList.add('visible');
+        }
+
+        function updateProgress(current, total, filename) {
+            const percent = Math.round((current / total) * 100);
+            progressFill.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+            progressStatus.textContent = `Processing: ${filename}`;
+        }
+
+        function renderPreviewTable() {
+            previewBody.innerHTML = '';
+
+            processedFiles.forEach((file, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="filename-cell" title="${file.filename}">${file.filename}</td>
+                    <td class="path-cell" title="${file.path}">${file.path}</td>
+                    <td class="type-cell type-${file.type}">${file.type}</td>
+                    <td>${file.sizeKB} KB</td>
+                    <td class="status-cell status-${file.status}">${file.statusText}</td>
+                    <td class="preview-cell" title="${file.preview}">${file.preview}</td>
+                    <td><button class="remove-btn" data-index="${index}" title="Remove">×</button></td>
+                `;
+                previewBody.appendChild(row);
+            });
+
+            fileCount.textContent = processedFiles.length;
+
+            // Add remove button listeners
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    processedFiles.splice(index, 1);
+                    renderPreviewTable();
+                    exportBtn.disabled = processedFiles.length === 0;
+                });
+            });
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('visible');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('visible');
+        }
+
+        // ==================== MAIN HANDLER ====================
+        async function handleFolderSelect(event) {
+            const files = Array.from(event.target.files);
+            if (files.length === 0) return;
+
+            hideError();
+            processedFiles = [];
+
+            // Categorize files
+            const categories = categorizeFiles(files);
+            const supportedFiles = [
+                ...categories.text,
+                ...categories.markdown,
+                ...categories.pdf,
+                ...categories.docx,
+                ...categories.image
+            ];
+
+            if (supportedFiles.length === 0) {
+                showError('No supported files found in the selected folder.');
+                return;
+            }
+
+            if (supportedFiles.length > CONFIG.MAX_FILES) {
+                showError(`Too many files (${supportedFiles.length}). Maximum supported is ${CONFIG.MAX_FILES} files.`);
+                return;
+            }
+
+            // Update UI
+            updateSummary(categories);
+            progressSection.classList.add('visible');
+            dropZone.style.display = 'none';
+            actions.style.display = 'flex';
+
+            // Process files
+            let processed = 0;
+            for (const file of supportedFiles) {
+                const type = getFileType(file.name);
+                updateProgress(processed, supportedFiles.length, file.name);
+
+                const result = await processFile(file, type);
+                processedFiles.push(result);
+                processed++;
+            }
+
+            // Final update
+            updateProgress(supportedFiles.length, supportedFiles.length, 'Complete!');
+            progressStatus.textContent = 'Processing complete!';
+
+            // Show preview
+            previewSection.classList.add('visible');
+            renderPreviewTable();
+            exportBtn.disabled = false;
+        }
+
+        // ==================== EXCEL EXPORT ====================
+        function exportToExcel() {
+            const workbook = XLSX.utils.book_new();
+
+            // Sheet 1: Overview
+            const overviewData = processedFiles.map(f => ({
+                'Filename': f.filename,
+                'Path': f.path,
+                'Type': f.type.toUpperCase(),
+                'Size (KB)': parseFloat(f.sizeKB),
+                'Status': f.statusText,
+                'Preview': f.preview
+            }));
+            const overviewSheet = XLSX.utils.json_to_sheet(overviewData);
+            XLSX.utils.book_append_sheet(workbook, overviewSheet, 'Overview');
+
+            // Sheet 2: Text Content (non-image files only)
+            const textFiles = processedFiles.filter(f => f.type !== 'image');
+            if (textFiles.length > 0) {
+                const textData = textFiles.map(f => ({
+                    'Filename': f.filename,
+                    'Path': f.path,
+                    'Type': f.type.toUpperCase(),
+                    'Smart Preview': f.smartPreview || '',
+                    'Full Content': (f.content || '').substring(0, CONFIG.EXCEL_CELL_LIMIT),
+                    'Char Count': f.charCount,
+                    'Word Count': f.wordCount
+                }));
+                const textSheet = XLSX.utils.json_to_sheet(textData);
+                XLSX.utils.book_append_sheet(workbook, textSheet, 'Text Content');
+            }
+
+            // Sheet 3: Images (image files only)
+            const imageFiles = processedFiles.filter(f => f.type === 'image');
+            if (imageFiles.length > 0) {
+                const imageData = imageFiles.map(f => ({
+                    'Filename': f.filename,
+                    'Path': f.path,
+                    'Format': f.format,
+                    'Size (KB)': parseFloat(f.sizeKB),
+                    'Dimensions': f.dimensions
+                }));
+                const imageSheet = XLSX.utils.json_to_sheet(imageData);
+                XLSX.utils.book_append_sheet(workbook, imageSheet, 'Images');
+            }
+
+            // Generate and download
+            const folderName = processedFiles[0]?.path.split('/')[0] || 'export';
+            const filename = `${folderName}_extraction_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(workbook, filename);
+        }
+
+        // ==================== RESET ====================
+        function resetApp() {
+            processedFiles = [];
+            folderInput.value = '';
+
+            // Reset UI
+            dropZone.style.display = 'block';
+            summary.classList.remove('visible');
+            progressSection.classList.remove('visible');
+            previewSection.classList.remove('visible');
+            actions.style.display = 'none';
+            exportBtn.disabled = true;
+            progressFill.style.width = '0%';
+            progressPercent.textContent = '0%';
+            previewBody.innerHTML = '';
+            hideError();
+        }
+    </script>
+</body>
+</html>
